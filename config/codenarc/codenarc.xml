@@ -1,0 +1,112 @@
+<!--
+  ~ Copyright 2010 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://codenarc.org/ruleset/1.0"
+		 xsi:schemaLocation="http://codenarc.org/ruleset/1.0 http://codenarc.org/ruleset-schema.xsd"
+		 xsi:noNamespaceSchemaLocation="http://codenarc.org/ruleset-schema.xsd">
+
+	<ruleset-ref path='rulesets/basic.xml'>
+		<exclude name='ExplicitHashSetInstantiation'/>
+		<exclude name='ExplicitCallToAndMethod'/>
+		<exclude name='ExplicitCallToOrMethod'/>
+	</ruleset-ref>
+
+	<ruleset-ref path='rulesets/braces.xml'/>
+	<ruleset-ref path='rulesets/concurrency.xml'/>
+	<ruleset-ref path='rulesets/dry.xml'/>
+	<ruleset-ref path='rulesets/enhanced.xml'/>
+	<ruleset-ref path='rulesets/exceptions.xml'>
+		<exclude name="CatchException"/>
+		<exclude name="CatchRuntimeException"/>
+	</ruleset-ref>
+	<ruleset-ref path='rulesets/generic.xml'/>
+	<ruleset-ref path='rulesets/jdbc.xml'>
+		<exclude name="JdbcConnectionReference"/>
+	</ruleset-ref>
+	<ruleset-ref path='rulesets/security.xml'/>
+	<ruleset-ref path='rulesets/serialization.xml'>
+		<exclude name="SerializableClassMustDefineSerialVersionUID"/>
+	</ruleset-ref>
+	<ruleset-ref path='rulesets/size.xml' >
+		<rule-config name='ParameterCount'>
+			<property name='maxParameters' value='7'/>
+		</rule-config>
+	</ruleset-ref>
+	<ruleset-ref path='rulesets/unused.xml'/>
+
+	<ruleset-ref path='rulesets/design.xml'>
+		<exclude name="Instanceof"/>
+		<exclude name="LocaleSetDefault"/>
+		<exclude name="SimpleDateFormatMissingLocale"/>
+	</ruleset-ref>
+
+	<ruleset-ref path='rulesets/groovyism.xml'>
+		<exclude name="GStringExpressionWithinString"/>
+	</ruleset-ref>
+
+	<ruleset-ref path='rulesets/logging.xml'/>
+
+	<ruleset-ref path='rulesets/formatting.xml'>
+		<rule-config name='LineLength'>
+			<property name='length' value='180'/>
+			<property name='ignoreLineRegex' value='.*\|.*\|\|.*'/>
+		</rule-config>
+
+		<exclude name="SpaceAroundMapEntryColon"/>
+		<exclude name="Indentation"/>
+		<exclude name="ClassJavadoc"/>
+		<exclude name="ClassEndsWithBlankLine"/>
+		<exclude name="ClassStartsWithBlankLine"/>
+	</ruleset-ref>
+
+	<ruleset-ref path='rulesets/convention.xml'>
+		<rule-config name="CompileStatic">
+			<property name='doNotApplyToClassNames' value='*Spec,*Specification,*Test'/>
+		</rule-config>
+
+		<rule-config name="MethodReturnTypeRequired">
+			<property name='doNotApplyToClassNames' value='*Spec,*Specification,*Test'/>
+		</rule-config>
+
+		<exclude name="NoTabCharacter"/>
+		<exclude name="NoDouble"/>
+		<exclude name="ImplicitClosureParameter"/>
+	</ruleset-ref>
+
+	<ruleset-ref path='rulesets/imports.xml'>
+		<rule-config name="NoWildcardImports">
+			<property name="ignoreImports" value="true"/>
+		</rule-config>
+	</ruleset-ref>
+
+	<ruleset-ref path='rulesets/naming.xml'>
+		<rule-config name="MethodName">
+			<property name='doNotApplyToClassNames' value='*Spec,*Specification,*Test'/>
+		</rule-config>
+		<rule-config name='VariableName'>
+			<property name='doNotApplyToClassNames' value='*Spec,*Specification,*Test'/>
+		</rule-config>
+	</ruleset-ref>
+
+	<ruleset-ref path='rulesets/unnecessary.xml'>
+		<rule-config name="UnnecessaryBooleanExpression">
+			<property name='doNotApplyToClassNames' value='*Spec,*Specification,*Test'/>
+		</rule-config>
+		<exclude name="UnnecessaryReturnKeyword"/>
+		<exclude name="UnnecessaryPackageReference"/>
+		<exclude name="UnnecessaryObjectReferences"/>
+	</ruleset-ref>
+
+</ruleset>
