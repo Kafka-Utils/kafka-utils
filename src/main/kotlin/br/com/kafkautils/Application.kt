@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.info.Info
     )
 )
 object Api
-// Test
+
 fun main(args: Array<String>) {
     build()
         .args(*args)
