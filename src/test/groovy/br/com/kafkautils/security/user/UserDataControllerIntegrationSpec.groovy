@@ -7,11 +7,9 @@ import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import org.junit.jupiter.api.TestInstance
-import spock.lang.Stepwise
 
 import javax.inject.Inject
 
-//@Stepwise
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserDataControllerIntegrationSpec extends IntegrationSpec {
