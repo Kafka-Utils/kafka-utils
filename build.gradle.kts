@@ -7,6 +7,7 @@ plugins {
     id("io.micronaut.application") version "1.4.2"
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
     id("codenarc")
+    id("jacoco")
 }
 
 version = "0.1"
@@ -34,17 +35,18 @@ dependencies {
     implementation("io.micronaut:micronaut-multitenancy")
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.beanvalidation:micronaut-hibernate-validator")
-    implementation("io.micronaut.data:micronaut-data-jdbc")
+    implementation("io.micronaut.r2dbc:micronaut-r2dbc-core")
+    implementation("io.micronaut.r2dbc:micronaut-data-r2dbc")
     implementation("io.micronaut.flyway:micronaut-flyway")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     implementation("io.micronaut.security:micronaut-security")
     implementation("io.micronaut.security:micronaut-security-jwt")
-    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.swagger.core.v3:swagger-annotations")
     implementation("javax.annotation:javax.annotation-api")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     testImplementation("org.testcontainers:postgresql")
+    testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("org.testcontainers:spock")
     testImplementation("org.testcontainers:testcontainers")
     compileOnly("org.graalvm.nativeimage:svm")
@@ -55,6 +57,7 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("io.r2dbc:r2dbc-postgresql")
 }
 
 extensions.getByType(CodeNarcExtension::class.java).toolVersion = "2.1.0"
@@ -78,6 +81,30 @@ tasks {
     compileTestKotlin {
         kotlinOptions {
             jvmTarget = "11"
+        }
+    }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = "CLASS"
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = BigDecimal("0.8")
+            }
+            excludes = listOf(
+                "br.com.kafkautils.Api",
+                "br.com.kafkautils.ApplicationKt"
+            )
         }
     }
 }
