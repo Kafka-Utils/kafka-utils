@@ -1,7 +1,8 @@
 package br.com.kafkautils
 
 import io.micronaut.test.support.TestPropertyProvider
-import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.utility.DockerImageName
 import spock.lang.Shared
 import spock.lang.Specification
@@ -9,24 +10,24 @@ import spock.lang.Specification
 class IntegrationSpec extends Specification implements TestPropertyProvider {
 
 	@Shared
-	private PostgreSQLContainer postgreSQLContainer
+	private MySQLContainer container
 
 	void cleanupSpec() {
-		postgreSQLContainer?.stop()
+		container?.stop()
 	}
 
 	@Override
 	Map<String, String> getProperties() {
-		postgreSQLContainer = new PostgreSQLContainer(DockerImageName.parse("postgres:13"))
+		container = new MySQLContainer()
 				.withDatabaseName('kafka_utils')
-				.withUsername('postgres')
-				.withPassword('postgres')
-		postgreSQLContainer.start()
+				.withUsername('mysql')
+				.withPassword('mysql')
+		container.start()
 		Map<String, String> properties = [
-				'database.host'    : postgreSQLContainer.containerIpAddress,
-				'database.port'    : postgreSQLContainer.getMappedPort(5432),
-				'database.username': postgreSQLContainer.username,
-				'database.password': postgreSQLContainer.password,
+				'dbcommons.host'    : container.containerIpAddress,
+				'dbcommons.port'    : container.getMappedPort(3306).toString(),
+				'dbcommons.username': 'mysql',
+				'dbcommons.password': 'mysql',
 
 		]
 		return properties

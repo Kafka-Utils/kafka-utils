@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 import java.util.*
 import javax.validation.constraints.NotNull
 
-@R2dbcRepository(dialect = Dialect.POSTGRES)
-interface UserRepository: ReactorCrudRepository<UserData, UUID> {
+@R2dbcRepository(dialect = Dialect.MYSQL)
+interface UserRepository: ReactorCrudRepository<UserData, Int> {
     fun findByUsername(@NotNull username: String): Mono<UserData>
 }

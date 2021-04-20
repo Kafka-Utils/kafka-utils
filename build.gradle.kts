@@ -45,9 +45,9 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    testImplementation("org.testcontainers:postgresql")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("org.testcontainers:spock")
+    testImplementation("org.testcontainers:mysql")
     testImplementation("org.testcontainers:testcontainers")
     compileOnly("org.graalvm.nativeimage:svm")
     implementation("io.micronaut:micronaut-validation")
@@ -56,8 +56,8 @@ dependencies {
     implementation("io.micronaut.cache:micronaut-cache-caffeine")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
-    runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("io.r2dbc:r2dbc-postgresql")
+    runtimeOnly("mysql:mysql-connector-java")
+    runtimeOnly("dev.miku:r2dbc-mysql")
 }
 
 extensions.getByType(CodeNarcExtension::class.java).toolVersion = "2.1.0"

@@ -39,7 +39,7 @@ class UserDataControllerIntegrationSpec extends IntegrationSpec {
 
 	void "Get"() {
 		given:
-		MutableHttpRequest request = HttpRequest.GET("/01b2d119-afe2-4c82-b93e-9633391a52dc")
+		MutableHttpRequest request = HttpRequest.GET("/1")
 		when:
 		UserData result = client.toBlocking().retrieve(request, UserData)
 		then:

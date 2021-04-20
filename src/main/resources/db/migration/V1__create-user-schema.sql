@@ -1,6 +1,5 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS user_data(
-    id uuid primary key,
+    id INT NOT NULL AUTO_INCREMENT primary key,
     username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -8,4 +7,4 @@ CREATE TABLE IF NOT EXISTS user_data(
     active boolean
 );
 
-INSERT INTO user_data values ('01b2d119-afe2-4c82-b93e-9633391a52dc', 'admin', 'admin', 'Admin', 'ADMIN', true);
+INSERT INTO user_data(username, password, name, role, active) values ('admin', 'admin', 'Admin', 'ADMIN', true);

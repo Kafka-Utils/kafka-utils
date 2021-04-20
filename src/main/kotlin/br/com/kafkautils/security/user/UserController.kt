@@ -16,7 +16,7 @@ open class UserController(private val userRepository: UserRepository) {
     }
 
     @Get("/{id}")
-    open fun get(@PathVariable id: UUID): Mono<UserData> {
+    open fun get(@PathVariable id: Int): Mono<UserData> {
         return userRepository.findById(id)
     }
 
@@ -28,7 +28,7 @@ open class UserController(private val userRepository: UserRepository) {
     }
 
     @Put("/{id}")
-    open fun update(@PathVariable id: UUID, @Valid @Body userDataMono: Mono<UserData>): Mono<UserData> {
+    open fun update(@PathVariable id: Int, @Valid @Body userDataMono: Mono<UserData>): Mono<UserData> {
         return userDataMono.flatMap {
             it.id = id
             userRepository.update(it)

@@ -14,30 +14,24 @@ micronaut:
 #            generator:
 #              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
 
-database:
+dbcommons:
   host: localhost
-  port: 5433
-  username: postgres
-  password: postgres
+  port: 3306
+  username: root
+  password: mysql
 
-datasources:
-  default:
-    url: 'jdbc:postgresql://${database.host}:${database.port}/kafka_utils'
-    driverClassName: org.postgresql.Driver
-    username: '${database.username}'
-    password: '${database.password}'
-    schema-generate: none
-    dialect: POSTGRES
+r2dbc:
+  datasources:
+    default:
+      url: 'r2dbc:mysql://${dbcommons.host}:${dbcommons.port}/kafka_utils'
+      username: '${dbcommons.username}'
+      password: '${dbcommons.password}'
+      schema-generate: none
 
 flyway:
   datasources:
     default:
       enabled: true
-r2dbc:
-  datasources:
-    default:
-      url: 'r2dbc:postgresql://${database.host}:${database.port}/kafka_utils'
-      username: '${database.username}'
-      password: '${database.password}'
-      schema-generate: none
-
+      url: 'jdbc:mysql://${dbcommons.host}:${dbcommons.port}/kafka_utils'
+      username: '${dbcommons.username}'
+      password: '${dbcommons.password}'
