@@ -10,4 +10,5 @@ import javax.validation.constraints.NotNull
 @R2dbcRepository(dialect = Dialect.MYSQL)
 interface UserRepository: ReactorCrudRepository<UserData, Int> {
     fun findByUsername(@NotNull username: String): Mono<UserData>
+    fun existsByUsername(@NotNull username: String): Mono<Boolean>
 }

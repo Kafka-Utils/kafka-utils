@@ -1,21 +1,12 @@
 package br.com.kafkautils.security.user
 
-import io.micronaut.data.annotation.*
-import java.time.LocalDateTime
-import java.util.*
+import io.micronaut.core.annotation.Introspected
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
-@MappedEntity
-data class UserData(
-    @field: Id
-    @field: AutoPopulated
-    var id: UUID? = null,
-    @field: DateCreated
-    var dateCreated: LocalDateTime?,
-    @field: DateUpdated
-    var dateUpdated: LocalDateTime?,
+@Introspected
+data class NewUserCommand(
     @field: NotBlank
     @field: Size(min = 3, max = 100)
     @field: Pattern(regexp = "[a-z][\\w_.]{2,}")

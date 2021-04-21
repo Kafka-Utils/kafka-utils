@@ -6,12 +6,10 @@ import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
-import org.junit.jupiter.api.TestInstance
 
 import javax.inject.Inject
 
 @MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserDataControllerIntegrationSpec extends IntegrationSpec {
 
 	@Inject

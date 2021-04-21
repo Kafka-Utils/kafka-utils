@@ -1,9 +1,7 @@
 package br.com.kafkautils
 
 import io.micronaut.test.support.TestPropertyProvider
-import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.utility.DockerImageName
 import spock.lang.Shared
 import spock.lang.Specification
 
