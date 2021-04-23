@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank
 @Introspected
 @Schema(name = "User")
 data class UserDto(
-    val id: UUID,
+    val id: Int,
     @field: NotBlank
     val username: String,
     @field: NotBlank

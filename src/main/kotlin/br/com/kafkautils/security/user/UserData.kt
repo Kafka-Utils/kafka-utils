@@ -2,7 +2,6 @@ package br.com.kafkautils.security.user
 
 import io.micronaut.data.annotation.*
 import java.time.LocalDateTime
-import java.util.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
@@ -10,8 +9,8 @@ import javax.validation.constraints.Size
 @MappedEntity
 data class UserData(
     @field: Id
-    @field: AutoPopulated
-    var id: UUID? = null,
+    @field: GeneratedValue
+    var id: Int? = null,
     @field: DateCreated
     var dateCreated: LocalDateTime?,
     @field: DateUpdated

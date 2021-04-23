@@ -1,5 +1,6 @@
 package br.com.kafkautils.security.user
 
+import br.com.kafkautils.exceptions.ConflictException
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import javax.inject.Singleton
@@ -16,12 +17,13 @@ open class UserService(
     open fun add(@Valid user: UserData): Mono<UserData> {
         return userRepository.existsByUsername(user.username).flatMap { existsUser ->
             if (existsUser) {
-                throw RuntimeException()
+                Mono.error(ConflictException("Username ${user.username} is already in use!"))
+            } else {
+                val userToSave = user.copy(
+                    password = passwordEncoder.encode(user.password)
+                )
+                userRepository.save(userToSave)
             }
-            val userToSave = user.copy(
-                password = passwordEncoder.encode(user.password)
-            )
-            userRepository.save(userToSave)
         }
     }
 
@@ -34,7 +36,7 @@ open class UserService(
             val userToSave = user.copy(
                 password = passwordEncoder.encode(user.password)
             )
-            userRepository.save(userToSave).then()
+            userRepository.update(userToSave).then()
         }
     }
 

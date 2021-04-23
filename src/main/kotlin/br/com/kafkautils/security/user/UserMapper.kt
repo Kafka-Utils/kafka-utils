@@ -5,8 +5,14 @@ import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
 
 @Mapper(componentModel = "jsr330", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-interface UserMapper {
-    fun toDto(user: UserData): UserDto
-    fun updateFromCommand(command: UpdateUserCommand, @MappingTarget user: UserData): UserData
-    fun toDomain(command: NewUserCommand): UserData
+abstract class UserMapper {
+    abstract fun toDto(user: UserData): UserDto
+    abstract fun toDomain(command: NewUserCommand): UserData
+    fun updateFromCommand(command: UpdateUserCommand, user: UserData): UserData {
+        return user.copy(
+            name = command.name,
+            role =  command.role,
+            active =  command.active
+        )
+    }
 }
