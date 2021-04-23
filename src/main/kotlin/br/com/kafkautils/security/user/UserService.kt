@@ -1,6 +1,7 @@
 package br.com.kafkautils.security.user
 
 import br.com.kafkautils.exceptions.ConflictException
+import br.com.kafkautils.i18n.Messages
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import javax.inject.Singleton
@@ -11,13 +12,15 @@ import javax.validation.Valid
 @Transactional
 open class UserService(
     private val passwordEncoder: PasswordEncoder,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val messages: Messages
 ) {
 
     open fun add(@Valid user: UserData): Mono<UserData> {
         return userRepository.existsByUsername(user.username).flatMap { existsUser ->
             if (existsUser) {
-                Mono.error(ConflictException("Username ${user.username} is already in use!"))
+                val msg = messages.getMessage("username.already.in.use", mapOf("username" to user.username))
+                Mono.error(ConflictException(msg))
             } else {
                 val userToSave = user.copy(
                     password = passwordEncoder.encode(user.password)

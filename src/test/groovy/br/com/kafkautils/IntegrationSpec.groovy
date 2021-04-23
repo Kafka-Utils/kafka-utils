@@ -20,6 +20,7 @@ class IntegrationSpec extends Specification implements TestPropertyProvider {
 				.withDatabaseName('kafka_utils')
 				.withUsername('mysql')
 				.withPassword('mysql')
+				.withTmpFs(['/var/lib/mysql': 'rw']) as MySQLContainer
 		container.start()
 		Map<String, String> properties = [
 				'dbcommons.host'    : container.containerIpAddress,
