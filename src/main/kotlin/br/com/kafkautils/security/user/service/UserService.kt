@@ -3,7 +3,7 @@ package br.com.kafkautils.security.user.service
 import br.com.kafkautils.exceptions.ConflictException
 import br.com.kafkautils.i18n.Messages
 import br.com.kafkautils.security.user.repository.PasswordEncoderService
-import br.com.kafkautils.security.user.model.UserData
+import br.com.kafkautils.security.user.model.User
 import br.com.kafkautils.security.user.repository.UserRepository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -19,7 +19,7 @@ open class UserService(
     private val messages: Messages
 ) {
 
-    open fun add(@Valid user: UserData): Mono<UserData> {
+    open fun add(@Valid user: User): Mono<User> {
         return userRepository.existsByUsername(user.username).flatMap { existsUser ->
             if (existsUser) {
                 val msg = messages.getMessage("username.already.in.use", mapOf("username" to user.username))
@@ -33,7 +33,7 @@ open class UserService(
         }
     }
 
-    open fun update(@Valid user: UserData): Mono<UserData> {
+    open fun update(@Valid user: User): Mono<User> {
         return userRepository.update(user)
     }
 
@@ -46,11 +46,11 @@ open class UserService(
         }
     }
 
-    open fun get(id: Int): Mono<UserData> {
+    open fun get(id: Int): Mono<User> {
         return userRepository.findById(id)
     }
 
-    open fun list(): Flux<UserData> {
+    open fun list(): Flux<User> {
         return userRepository.findAll()
     }
 }

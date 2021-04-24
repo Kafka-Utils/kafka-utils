@@ -7,7 +7,7 @@ import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
 @MappedEntity
-data class UserData(
+data class User(
     @field: Id
     @field: GeneratedValue
     var id: Int? = null,

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS user_data(
+CREATE TABLE IF NOT EXISTS user(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     date_created DATETIME NOT NULL,
     date_updated DATETIME,
@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS user_data(
     active BOOLEAN
 );
 
-INSERT INTO user_data(username, password, name, role, active, date_created)
+INSERT INTO user(username, password, name, role, active, date_created)
 VALUES ('admin', '$2b$12$SwKT/LWOb86Crn6OCzheruEs2NDgACjHl5HLWN9B4939AlS.8BAki', 'Admin', 'ADMIN', TRUE, now());

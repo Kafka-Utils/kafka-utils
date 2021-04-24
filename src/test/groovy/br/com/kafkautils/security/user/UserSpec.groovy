@@ -1,7 +1,7 @@
 package br.com.kafkautils.security.user
 
 import br.com.kafkautils.security.user.model.Role
-import br.com.kafkautils.security.user.model.UserData
+import br.com.kafkautils.security.user.model.User
 import spock.lang.Specification
 
 import javax.validation.ConstraintViolation
@@ -9,7 +9,7 @@ import javax.validation.Validation
 import javax.validation.Validator
 import javax.validation.ValidatorFactory
 
-class UserDataSpec extends Specification {
+class UserSpec extends Specification {
 
 	private Validator validator
 
@@ -20,7 +20,7 @@ class UserDataSpec extends Specification {
 
 	void "test username values"() {
 		given:
-		UserData user = new UserData(
+		User user = new User(
 				1,
 				null,
 				null,
@@ -48,7 +48,7 @@ class UserDataSpec extends Specification {
 
 	void "test password values"() {
 		given:
-		UserData user = new UserData(
+		User user = new User(
 				1,
 				null,
 				null,

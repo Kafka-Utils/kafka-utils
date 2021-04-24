@@ -8,7 +8,7 @@ import br.com.kafkautils.security.user.controller.command.UpdateUserCommand
 import br.com.kafkautils.security.user.controller.command.UpdateUserPasswordCommand
 import br.com.kafkautils.security.user.controller.dto.UserDto
 import br.com.kafkautils.security.user.model.Role
-import br.com.kafkautils.security.user.model.UserData
+import br.com.kafkautils.security.user.model.User
 import br.com.kafkautils.security.user.service.UserService
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
@@ -23,7 +23,7 @@ import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import javax.inject.Inject
 
 @MicronautTest(transactional = false)
-class UserDataControllerIntegrationSpec extends IntegrationSpec {
+class UserControllerIntegrationSpec extends IntegrationSpec {
 
 	@Inject
 	@Client('/api/user')
@@ -123,14 +123,14 @@ class UserDataControllerIntegrationSpec extends IntegrationSpec {
 
 	void "Update password"() {
 		given:
-		UserData userBefore = userService.get(2).blockOptional().get()
+		User userBefore = userService.get(2).blockOptional().get()
 		UpdateUserPasswordCommand user = new UpdateUserPasswordCommand(
 				'newPass'
 		)
 		MutableHttpRequest request = HttpRequest.PUT('/2/password', user)
 		when:
 		HttpResponse result = client.toBlocking().exchange(request)
-		UserData userAfter = userService.get(2).blockOptional().get()
+		User userAfter = userService.get(2).blockOptional().get()
 		then:
 		result.status() == HttpStatus.OK
 		userBefore.password != userAfter.password
