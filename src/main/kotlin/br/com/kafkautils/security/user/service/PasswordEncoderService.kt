@@ -1,4 +1,4 @@
-package br.com.kafkautils.security.user.repository
+package br.com.kafkautils.security.user.service
 
 import com.password4j.Password
 import io.micronaut.context.annotation.Property

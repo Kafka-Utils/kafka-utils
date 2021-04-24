@@ -8,7 +8,7 @@ import javax.validation.ConstraintViolation
 import javax.validation.ConstraintViolationException
 import javax.validation.Path
 
-class CustomConstraintExceptionHandlerTest extends Specification {
+class CustomConstraintExceptionHandlerSpec extends Specification {
 
 	CustomConstraintExceptionHandler customConstraintExceptionHandler
 

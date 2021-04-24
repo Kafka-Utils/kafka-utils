@@ -7,7 +7,7 @@ import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import spock.lang.Specification
 
-class BusinessExceptionHandlerTest extends Specification {
+class BusinessExceptionHandlerSpec extends Specification {
 
 	BusinessExceptionHandler businessExceptionHandler
 
