@@ -15,7 +15,7 @@ import javax.validation.ConstraintViolationException
 @Singleton
 @Replaces(ConstraintExceptionHandler::class)
 @Requires(classes = [ConstraintViolationException::class, ExceptionHandler::class])
-class CustomConstraintExceptionHandler: ExceptionHandler<ConstraintViolationException, HttpResponse<ValidationErrorList>> {
+class CustomConstraintExceptionHandler : ExceptionHandler<ConstraintViolationException, HttpResponse<ValidationErrorList>> {
     override fun handle(
         request: HttpRequest<*>,
         exception: ConstraintViolationException

@@ -1,7 +1,7 @@
 package br.com.kafkautils.i18n
 
 import io.micronaut.context.MessageSource
-import java.util.*
+import java.util.Locale
 import javax.inject.Singleton
 
 @Singleton

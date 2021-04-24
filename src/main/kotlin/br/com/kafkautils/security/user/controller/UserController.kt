@@ -1,18 +1,23 @@
 package br.com.kafkautils.security.user.controller
 
 import br.com.kafkautils.http.DefaultErrorResponses
-import br.com.kafkautils.security.user.service.UserService
 import br.com.kafkautils.security.user.controller.command.NewUserCommand
 import br.com.kafkautils.security.user.controller.command.UpdateUserCommand
 import br.com.kafkautils.security.user.controller.command.UpdateUserPasswordCommand
 import br.com.kafkautils.security.user.controller.dto.UserDto
-import io.micronaut.http.annotation.*
+import br.com.kafkautils.security.user.service.UserService
+import io.micronaut.http.annotation.Body
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.PathVariable
+import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.Put
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import javax.validation.Valid
 
 @Controller("/user")
-//@Secured("ADMIN") TODO KU-9
+// @Secured("ADMIN") TODO KU-9
 open class UserController(
     private val userService: UserService,
     private val userMapper: UserMapper
@@ -62,5 +67,4 @@ open class UserController(
     ): Mono<Void> {
         return userService.updatePassword(id, command.password)
     }
-
 }

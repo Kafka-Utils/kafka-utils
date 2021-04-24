@@ -78,7 +78,7 @@ class UserControllerIntegrationSpec extends IntegrationSpec {
 				password: '1',
 				name    : '1',
 				role    : Role.ADMIN,
-				active  : true
+				active  : true,
 		]
 		MutableHttpRequest request = HttpRequest.POST('/', user)
 		when:
@@ -92,7 +92,7 @@ class UserControllerIntegrationSpec extends IntegrationSpec {
 
 	void "Get"() {
 		given:
-		MutableHttpRequest request = HttpRequest.GET("/1")
+		MutableHttpRequest request = HttpRequest.GET('/1')
 		when:
 		UserDto result = client.toBlocking().retrieve(request, UserDto)
 		then:
@@ -138,7 +138,7 @@ class UserControllerIntegrationSpec extends IntegrationSpec {
 
 	void "List"() {
 		given:
-		MutableHttpRequest request = HttpRequest.GET("/")
+		MutableHttpRequest request = HttpRequest.GET('/')
 		when:
 		List<UserDto> result = client.toBlocking().retrieve(request, Argument.listOf(UserDto))
 		then:

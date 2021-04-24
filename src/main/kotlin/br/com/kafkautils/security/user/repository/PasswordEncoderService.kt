@@ -17,5 +17,4 @@ class PasswordEncoderService(
     fun check(password: String, hash: String): Boolean {
         return Password.check(password, hash).addSalt(salt).withBCrypt()
     }
-
 }

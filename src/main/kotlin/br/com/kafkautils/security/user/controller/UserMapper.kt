@@ -1,9 +1,9 @@
 package br.com.kafkautils.security.user.controller
 
-import br.com.kafkautils.security.user.model.User
 import br.com.kafkautils.security.user.controller.command.NewUserCommand
 import br.com.kafkautils.security.user.controller.command.UpdateUserCommand
 import br.com.kafkautils.security.user.controller.dto.UserDto
+import br.com.kafkautils.security.user.model.User
 import org.mapstruct.Mapper
 import org.mapstruct.ReportingPolicy
 
@@ -14,8 +14,8 @@ abstract class UserMapper {
     fun updateFromCommand(command: UpdateUserCommand, user: User): User {
         return user.copy(
             name = command.name,
-            role =  command.role,
-            active =  command.active
+            role = command.role,
+            active = command.active
         )
     }
 }

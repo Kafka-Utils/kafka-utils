@@ -4,5 +4,4 @@ enum class Role {
     ADMIN,
     EDITOR,
     VIEWER;
-
 }

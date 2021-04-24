@@ -2,8 +2,8 @@ package br.com.kafkautils.security.user.service
 
 import br.com.kafkautils.exceptions.ConflictException
 import br.com.kafkautils.i18n.Messages
-import br.com.kafkautils.security.user.repository.PasswordEncoderService
 import br.com.kafkautils.security.user.model.User
+import br.com.kafkautils.security.user.repository.PasswordEncoderService
 import br.com.kafkautils.security.user.repository.UserRepository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

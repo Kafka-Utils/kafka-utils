@@ -1,6 +1,5 @@
 package br.com.kafkautils.http.handler
 
-
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import spock.lang.Specification
