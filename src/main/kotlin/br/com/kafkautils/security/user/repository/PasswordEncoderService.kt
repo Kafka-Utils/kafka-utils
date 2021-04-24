@@ -1,11 +1,11 @@
-package br.com.kafkautils.security.user
+package br.com.kafkautils.security.user.repository
 
+import com.password4j.Password
 import io.micronaut.context.annotation.Property
 import javax.inject.Singleton
-import com.password4j.Password
 
 @Singleton
-class PasswordEncoder(
+class PasswordEncoderService(
     @Property(name = "password-encoder.slat") private val salt: String
 ) {
 

@@ -1,6 +1,11 @@
-package br.com.kafkautils.security.user
+package br.com.kafkautils.security.user.controller
 
 import br.com.kafkautils.http.DefaultErrorResponses
+import br.com.kafkautils.security.user.service.UserService
+import br.com.kafkautils.security.user.controller.command.NewUserCommand
+import br.com.kafkautils.security.user.controller.command.UpdateUserCommand
+import br.com.kafkautils.security.user.controller.command.UpdateUserPasswordCommand
+import br.com.kafkautils.security.user.controller.dto.UserDto
 import io.micronaut.http.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

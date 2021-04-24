@@ -1,8 +1,7 @@
-package br.com.kafkautils.security.user
+package br.com.kafkautils.security.user.controller.command
 
 import io.micronaut.core.annotation.Introspected
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
 @Introspected

@@ -3,6 +3,13 @@ package br.com.kafkautils.security.user
 import br.com.kafkautils.IntegrationSpec
 import br.com.kafkautils.http.handler.ResponseError
 import br.com.kafkautils.http.handler.ValidationErrorList
+import br.com.kafkautils.security.user.controller.command.NewUserCommand
+import br.com.kafkautils.security.user.controller.command.UpdateUserCommand
+import br.com.kafkautils.security.user.controller.command.UpdateUserPasswordCommand
+import br.com.kafkautils.security.user.controller.dto.UserDto
+import br.com.kafkautils.security.user.model.Role
+import br.com.kafkautils.security.user.model.UserData
+import br.com.kafkautils.security.user.service.UserService
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse

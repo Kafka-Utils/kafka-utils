@@ -1,5 +1,7 @@
 package br.com.kafkautils.security.user
 
+import br.com.kafkautils.security.user.model.Role
+import br.com.kafkautils.security.user.model.UserData
 import spock.lang.Specification
 
 import javax.validation.ConstraintViolation
@@ -19,7 +21,9 @@ class UserDataSpec extends Specification {
 	void "test username values"() {
 		given:
 		UserData user = new UserData(
-				UUID.randomUUID(),
+				1,
+				null,
+				null,
 				username,
 				'admin',
 				'',
@@ -45,7 +49,9 @@ class UserDataSpec extends Specification {
 	void "test password values"() {
 		given:
 		UserData user = new UserData(
-				UUID.randomUUID(),
+				1,
+				null,
+				null,
 				'admin',
 				password,
 				'',

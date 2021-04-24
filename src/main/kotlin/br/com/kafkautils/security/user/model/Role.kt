@@ -1,4 +1,4 @@
-package br.com.kafkautils.security.user
+package br.com.kafkautils.security.user.model
 
 enum class Role {
     ADMIN,
