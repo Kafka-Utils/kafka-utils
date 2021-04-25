@@ -1,4 +1,4 @@
-package br.com.kafkautils.security.user.repository
+package br.com.kafkautils.security.user.service
 
 import com.password4j.Password
 import io.micronaut.context.annotation.Property
@@ -17,5 +17,4 @@ class PasswordEncoderService(
     fun check(password: String, hash: String): Boolean {
         return Password.check(password, hash).addSalt(salt).withBCrypt()
     }
-
 }

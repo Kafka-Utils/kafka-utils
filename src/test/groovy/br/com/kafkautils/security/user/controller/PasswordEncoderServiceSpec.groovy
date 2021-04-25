@@ -1,9 +1,9 @@
-package br.com.kafkautils.security.user
+package br.com.kafkautils.security.user.controller
 
-import br.com.kafkautils.security.user.repository.PasswordEncoderService
+import br.com.kafkautils.security.user.service.PasswordEncoderService
 import spock.lang.Specification
 
-class PasswordEncoderServiceTest extends Specification {
+class PasswordEncoderServiceSpec extends Specification {
 
 	void "test encoder and check"() {
 		given:

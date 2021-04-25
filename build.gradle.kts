@@ -66,6 +66,13 @@ dependencies {
 extensions.getByType(CodeNarcExtension::class.java).toolVersion = "2.1.0"
 tasks.withType(CodeNarc::class.java) {
     group = "verification"
+    compilationClasspath += codenarcClasspath
+    compilationClasspath += (
+        sourceSets.main.get().runtimeClasspath +
+            sourceSets.main.get().compileClasspath +
+            sourceSets.test.get().runtimeClasspath +
+            sourceSets.test.get().compileClasspath
+        )
 }
 
 application {

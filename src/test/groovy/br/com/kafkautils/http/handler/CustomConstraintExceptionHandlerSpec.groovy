@@ -1,6 +1,5 @@
 package br.com.kafkautils.http.handler
 
-
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import spock.lang.Specification
@@ -9,7 +8,7 @@ import javax.validation.ConstraintViolation
 import javax.validation.ConstraintViolationException
 import javax.validation.Path
 
-class CustomConstraintExceptionHandlerTest extends Specification {
+class CustomConstraintExceptionHandlerSpec extends Specification {
 
 	CustomConstraintExceptionHandler customConstraintExceptionHandler
 
