@@ -1,4 +1,4 @@
-package br.com.kafkautils.security.user.controller.command
+package br.com.kafkautils.security.user.controller.dto
 
 import br.com.kafkautils.security.user.model.Role
 import io.micronaut.core.annotation.Introspected
@@ -7,7 +7,7 @@ import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
 @Introspected
-data class NewUserCommand(
+data class NewUserDto(
     @field: NotBlank
     @field: Size(min = 3, max = 100)
     @field: Pattern(regexp = "[a-z][\\w_.]{2,}")
