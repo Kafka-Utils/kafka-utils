@@ -1,7 +1,7 @@
 package br.com.kafkautils.security.user.controller
 
 import br.com.kafkautils.http.DefaultErrorResponses
-import br.com.kafkautils.security.user.controller.command.UpdateUserPasswordCommand
+import br.com.kafkautils.security.user.controller.dto.UpdateUserPasswordDto
 import br.com.kafkautils.security.user.controller.dto.UserDto
 import br.com.kafkautils.security.user.service.UserService
 import io.micronaut.http.annotation.Body
@@ -34,10 +34,10 @@ open class CurrentUserController(
     @Put("/password")
     @DefaultErrorResponses
     open fun updatePassword(
-        @Valid @Body command: UpdateUserPasswordCommand
+        @Valid @Body dto: UpdateUserPasswordDto
     ): Mono<Void> {
         val id = getCurrentUserId()
-        return userService.updatePassword(id, command.password)
+        return userService.updatePassword(id, dto.password)
     }
 
     private fun getCurrentUserId(): Int {

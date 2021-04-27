@@ -4,9 +4,9 @@ import br.com.kafkautils.IntegrationSpec
 import br.com.kafkautils.http.handler.ResponseError
 import br.com.kafkautils.http.handler.ValidationErrorList
 import br.com.kafkautils.security.mock.MockAccessTokenProvider
-import br.com.kafkautils.security.user.controller.command.NewUserCommand
-import br.com.kafkautils.security.user.controller.command.UpdateUserCommand
-import br.com.kafkautils.security.user.controller.command.UpdateUserPasswordCommand
+import br.com.kafkautils.security.user.controller.dto.NewUserDto
+import br.com.kafkautils.security.user.controller.dto.UpdateUserDto
+import br.com.kafkautils.security.user.controller.dto.UpdateUserPasswordDto
 import br.com.kafkautils.security.user.controller.dto.UserDto
 import br.com.kafkautils.security.user.model.Role
 import br.com.kafkautils.security.user.model.User
@@ -35,11 +35,11 @@ class UserControllerSpec extends IntegrationSpec {
 	private UserService userService
 
 	@Inject
-	MockAccessTokenProvider accessTokenProvider
+	private MockAccessTokenProvider accessTokenProvider
 
 	void "Add"() {
 		given:
-		NewUserCommand user = new NewUserCommand(
+		NewUserDto user = new NewUserDto(
 				'user',
 				'123456',
 				'User',
@@ -62,7 +62,7 @@ class UserControllerSpec extends IntegrationSpec {
 
 	void "try add duplicate username"() {
 		given:
-		NewUserCommand user = new NewUserCommand(
+		NewUserDto user = new NewUserDto(
 				'admin',
 				'123456',
 				'admin 2',
@@ -118,7 +118,7 @@ class UserControllerSpec extends IntegrationSpec {
 
 	void "Update"() {
 		given:
-		UpdateUserCommand user = new UpdateUserCommand(
+		UpdateUserDto user = new UpdateUserDto(
 				'User Up',
 				Role.VIEWER,
 				false
@@ -139,7 +139,7 @@ class UserControllerSpec extends IntegrationSpec {
 	void "Update password"() {
 		given:
 		User userBefore = userService.getByUsername('user').blockOptional().get()
-		UpdateUserPasswordCommand user = new UpdateUserPasswordCommand(
+		UpdateUserPasswordDto user = new UpdateUserPasswordDto(
 				'newPass'
 		)
 		String accessToken = accessTokenProvider.adminAccessToken
@@ -167,7 +167,7 @@ class UserControllerSpec extends IntegrationSpec {
 
 	void "try add with role editor"() {
 		given:
-		NewUserCommand user = new NewUserCommand(
+		NewUserDto user = new NewUserDto(
 				'user2',
 				'123456',
 				'user 2',
@@ -198,7 +198,7 @@ class UserControllerSpec extends IntegrationSpec {
 
 	void "try update with role editor"() {
 		given:
-		UpdateUserCommand user = new UpdateUserCommand(
+		UpdateUserDto user = new UpdateUserDto(
 				'User Up',
 				Role.VIEWER,
 				false
@@ -215,7 +215,7 @@ class UserControllerSpec extends IntegrationSpec {
 
 	void "try update password with role editor"() {
 		given:
-		UpdateUserPasswordCommand user = new UpdateUserPasswordCommand(
+		UpdateUserPasswordDto user = new UpdateUserPasswordDto(
 				'newPass'
 		)
 		String accessToken = accessTokenProvider.editorAccessToken

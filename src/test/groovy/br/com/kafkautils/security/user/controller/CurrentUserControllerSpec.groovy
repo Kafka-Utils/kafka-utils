@@ -2,7 +2,7 @@ package br.com.kafkautils.security.user.controller
 
 import br.com.kafkautils.IntegrationSpec
 import br.com.kafkautils.security.mock.MockAccessTokenProvider
-import br.com.kafkautils.security.user.controller.command.UpdateUserPasswordCommand
+import br.com.kafkautils.security.user.controller.dto.UpdateUserPasswordDto
 import br.com.kafkautils.security.user.model.User
 import br.com.kafkautils.security.user.service.UserService
 import io.micronaut.http.HttpHeaders
@@ -32,7 +32,7 @@ class CurrentUserControllerSpec extends IntegrationSpec {
 	void "Update password"() {
 		given:
 		User userBefore = userService.getByUsername('viewer').blockOptional().get()
-		UpdateUserPasswordCommand user = new UpdateUserPasswordCommand(
+		UpdateUserPasswordDto user = new UpdateUserPasswordDto(
 				'newPass'
 		)
 		String accessToken = accessTokenProvider.viewerAccessToken

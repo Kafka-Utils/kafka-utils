@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS cluster(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    date_created DATETIME NOT NULL,
+    date_updated DATETIME,
+    name VARCHAR(255) NOT NULL,
+    brokers TEXT NOT NULL
+);

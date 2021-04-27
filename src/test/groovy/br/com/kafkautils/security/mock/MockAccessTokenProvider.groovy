@@ -68,7 +68,7 @@ class MockAccessTokenProvider {
 				viewerName,
 				viewerName,
 				'Viewer',
-				Role.EDITOR,
+				Role.VIEWER,
 				true
 		)).block()
 	}

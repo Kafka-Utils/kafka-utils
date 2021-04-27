@@ -1,9 +1,9 @@
 package br.com.kafkautils.security.user.controller
 
 import br.com.kafkautils.http.DefaultErrorResponses
-import br.com.kafkautils.security.user.controller.command.NewUserCommand
-import br.com.kafkautils.security.user.controller.command.UpdateUserCommand
-import br.com.kafkautils.security.user.controller.command.UpdateUserPasswordCommand
+import br.com.kafkautils.security.user.controller.dto.NewUserDto
+import br.com.kafkautils.security.user.controller.dto.UpdateUserDto
+import br.com.kafkautils.security.user.controller.dto.UpdateUserPasswordDto
 import br.com.kafkautils.security.user.controller.dto.UserDto
 import br.com.kafkautils.security.user.service.UserService
 import io.micronaut.http.annotation.Body
@@ -42,8 +42,8 @@ open class UserController(
 
     @Post("/")
     @DefaultErrorResponses
-    open fun add(@Valid @Body command: NewUserCommand): Mono<UserDto> {
-        val user = userMapper.toDomain(command)
+    open fun add(@Valid @Body dto: NewUserDto): Mono<UserDto> {
+        val user = userMapper.toDomain(dto)
         return userService.add(user).map {
             userMapper.toDto(it)
         }
@@ -51,9 +51,9 @@ open class UserController(
 
     @Put("/{id}")
     @DefaultErrorResponses
-    open fun update(@PathVariable id: Int, @Valid @Body command: UpdateUserCommand): Mono<UserDto> {
+    open fun update(@PathVariable id: Int, @Valid @Body dto: UpdateUserDto): Mono<UserDto> {
         return userService.get(id).flatMap { user ->
-            val userToUpdate = userMapper.updateFromCommand(command, user)
+            val userToUpdate = userMapper.updateFromCommand(dto, user)
             userService.update(userToUpdate).map {
                 userMapper.toDto(it)
             }
@@ -64,8 +64,8 @@ open class UserController(
     @DefaultErrorResponses
     open fun updatePassword(
         @PathVariable id: Int,
-        @Valid @Body command: UpdateUserPasswordCommand
+        @Valid @Body dto: UpdateUserPasswordDto
     ): Mono<Void> {
-        return userService.updatePassword(id, command.password)
+        return userService.updatePassword(id, dto.password)
     }
 }
