@@ -10,18 +10,19 @@ import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import javax.validation.Valid
 
 @Controller("/cluster")
-@Secured("EDITOR")
 open class ClusterController(
     private val custerService: CusterService,
     private val clusterMapper: ClusterMapper
 ) {
 
     @Get("/")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @DefaultErrorResponses
     open fun list(): Flux<ClusterCommandDto> {
         return custerService.list().map {
@@ -30,6 +31,7 @@ open class ClusterController(
     }
 
     @Get("/{id}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @DefaultErrorResponses
     open fun get(@PathVariable id: Int): Mono<ClusterCommandDto> {
         return custerService.get(id).map {
@@ -37,6 +39,7 @@ open class ClusterController(
         }
     }
 
+    @Secured("EDITOR", "ADMIN")
     @Post("/")
     @DefaultErrorResponses
     open fun add(@Valid @Body commandDto: ClusterCommandDto): Mono<ClusterCommandDto> {
@@ -46,6 +49,7 @@ open class ClusterController(
         }
     }
 
+    @Secured("EDITOR", "ADMIN")
     @Put("/{id}")
     @DefaultErrorResponses
     open fun update(@PathVariable id: Int, @Valid @Body commandDto: ClusterCommandDto): Mono<ClusterCommandDto> {

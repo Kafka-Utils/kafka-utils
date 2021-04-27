@@ -3,5 +3,5 @@ CREATE TABLE IF NOT EXISTS cluster(
     date_created DATETIME NOT NULL,
     date_updated DATETIME,
     name VARCHAR(255) NOT NULL,
-    brokers JSON NOT NULL
+    brokers TEXT NOT NULL
 );

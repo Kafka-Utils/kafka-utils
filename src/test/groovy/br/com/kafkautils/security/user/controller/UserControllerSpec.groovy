@@ -35,7 +35,7 @@ class UserControllerSpec extends IntegrationSpec {
 	private UserService userService
 
 	@Inject
-	MockAccessTokenProvider accessTokenProvider
+	private MockAccessTokenProvider accessTokenProvider
 
 	void "Add"() {
 		given:
