@@ -9,10 +9,11 @@ import org.mapstruct.ReportingPolicy
 abstract class ClusterMapper {
     abstract fun toDto(cluster: Cluster): ClusterCommandDto
     abstract fun toDomain(commandDto: ClusterCommandDto): Cluster
-    fun updateFromCommand(commandDto: ClusterCommandDto, user: Cluster): Cluster {
-        return user.copy(
+    fun updateFromCommand(commandDto: ClusterCommandDto, cluster: Cluster): Cluster {
+        return cluster.copy(
             name = commandDto.name,
-            brokers = commandDto.brokers
+            brokers = commandDto.brokers,
+            requestTimeoutMs = commandDto.requestTimeoutMs
         )
     }
 }

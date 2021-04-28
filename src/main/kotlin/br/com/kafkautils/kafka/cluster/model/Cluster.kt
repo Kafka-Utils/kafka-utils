@@ -28,5 +28,6 @@ data class Cluster(
     @field: Size(min = 1)
     @field: NotBlankElement
     @field: TypeDef(type = DataType.JSON)
-    val brokers: Set<String>
+    val brokers: Set<String>,
+    val requestTimeoutMs: Long = 5000
 )

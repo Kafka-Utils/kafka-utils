@@ -31,7 +31,8 @@ class ClusterControllerSpec extends IntegrationSpec {
 	def "Add"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster',
-				['localhost'].toSet()
+				['localhost'].toSet(),
+				5000
 		)
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.POST('/', dto)
@@ -46,7 +47,8 @@ class ClusterControllerSpec extends IntegrationSpec {
 	def "Update"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster a',
-				['localhost:19092', 'localhost:9092'].toSet()
+				['localhost:19092', 'localhost:9092'].toSet(),
+				10000
 		)
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.PUT('/1', dto)
@@ -83,7 +85,8 @@ class ClusterControllerSpec extends IntegrationSpec {
 	def "try add with viwer"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster',
-				['localhost'].toSet()
+				['localhost'].toSet(),
+				5000
 		)
 		String accessToken = accessTokenProvider.viewerAccessToken
 		MutableHttpRequest request = HttpRequest.POST('/', dto)
@@ -98,7 +101,8 @@ class ClusterControllerSpec extends IntegrationSpec {
 	def "try update with viwer"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster a',
-				['localhost:19092', 'localhost:9092'].toSet()
+				['localhost:19092', 'localhost:9092'].toSet(),
+				10000
 		)
 		String accessToken = accessTokenProvider.viewerAccessToken
 		MutableHttpRequest request = HttpRequest.PUT('/1', dto)

@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono
 import javax.validation.Valid
 
 @Controller("/cluster")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 open class ClusterController(
     private val custerService: CusterService,
     private val clusterMapper: ClusterMapper
