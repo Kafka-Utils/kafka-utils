@@ -1,7 +1,7 @@
 package br.com.kafkautils.kafka.topic.controller
 
 import br.com.kafkautils.http.DefaultErrorResponses
-import br.com.kafkautils.kafka.cluster.service.CusterService
+import br.com.kafkautils.kafka.cluster.service.ClusterService
 import br.com.kafkautils.kafka.topic.model.NewPartition
 import br.com.kafkautils.kafka.topic.model.NewTopicConfig
 import br.com.kafkautils.kafka.topic.model.Topic
@@ -25,23 +25,23 @@ import reactor.core.publisher.Mono
 
 @Controller("/cluster")
 @Secured(SecurityRule.IS_AUTHENTICATED)
-class TopicController(
+open class TopicController(
     private val topicService: TopicService,
-    private val custerService: CusterService
+    private val clusterService: ClusterService
 ) {
 
     @DefaultErrorResponses
     @Get("/{clusterId}/topic")
-    fun list(@PathVariable clusterId: Int): Flux<Topic> {
-        return custerService.get(clusterId).flatMapMany {
+    open fun list(@PathVariable clusterId: Int): Flux<Topic> {
+        return clusterService.get(clusterId).flatMapMany {
             topicService.list(it)
         }
     }
 
     @DefaultErrorResponses
     @Get("/{clusterId}/topic/{topic}")
-    fun get(@PathVariable clusterId: Int, @PathVariable topic: String): Mono<TopicDescription> {
-        return custerService.get(clusterId).flatMap {
+    open fun get(@PathVariable clusterId: Int, @PathVariable topic: String): Mono<TopicDescription> {
+        return clusterService.get(clusterId).flatMap {
             topicService.get(topic, it)
         }
     }
@@ -49,8 +49,8 @@ class TopicController(
     @DefaultErrorResponses
     @Secured("EDITOR")
     @Post("/{clusterId}/topic")
-    fun add(@PathVariable clusterId: Int, @Body @Valid config: NewTopicConfig): Mono<Void> {
-        return custerService.get(clusterId).flatMap {
+    open fun add(@PathVariable clusterId: Int, @Body @Valid config: NewTopicConfig): Mono<Void> {
+        return clusterService.get(clusterId).flatMap {
             topicService.add(config, it)
         }
     }
@@ -58,8 +58,8 @@ class TopicController(
     @DefaultErrorResponses
     @Secured("EDITOR")
     @Patch("/{clusterId}/topic/partitions")
-    fun addPartition(@PathVariable clusterId: Int, @Body @Valid partition: Set<NewPartition>): Mono<Void> {
-        return custerService.get(clusterId).flatMap {
+    open fun addPartition(@PathVariable clusterId: Int, @Body @Valid partition: Set<NewPartition>): Mono<Void> {
+        return clusterService.get(clusterId).flatMap {
             topicService.addPartition(partition, it)
         }
     }
@@ -67,8 +67,8 @@ class TopicController(
     @DefaultErrorResponses
     @Secured("EDITOR")
     @Put("/{clusterId}/topic/{topic}")
-    fun edit(@PathVariable clusterId: Int, @PathVariable topic: String, @Body @Valid config: TopicConfig): Mono<Void> {
-        return custerService.get(clusterId).flatMap {
+    open fun edit(@PathVariable clusterId: Int, @PathVariable topic: String, @Body @Valid config: TopicConfig): Mono<Void> {
+        return clusterService.get(clusterId).flatMap {
             val updateTopicConfig = UpdateTopicConfig(topic, config)
             topicService.edit(updateTopicConfig, it)
         }
@@ -77,8 +77,8 @@ class TopicController(
     @DefaultErrorResponses
     @Secured("EDITOR")
     @Delete("/{clusterId}/topic/{topic}")
-    fun delete(@PathVariable clusterId: Int, @PathVariable topic: String): Mono<Void> {
-        return custerService.get(clusterId).flatMap {
+    open fun delete(@PathVariable clusterId: Int, @PathVariable topic: String): Mono<Void> {
+        return clusterService.get(clusterId).flatMap {
             topicService.delete(topic, it)
         }
     }

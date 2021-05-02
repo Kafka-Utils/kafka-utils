@@ -1,6 +1,5 @@
 package br.com.kafkautils.kafka.topic.service
 
-import br.com.kafkautils.beanvalidator.NotBlankElement
 import br.com.kafkautils.kafka.clients.AdminClientFactory
 import br.com.kafkautils.kafka.cluster.model.Cluster
 import br.com.kafkautils.kafka.topic.model.NewPartition
@@ -25,12 +24,12 @@ import reactor.core.publisher.Mono
 
 
 @Singleton
-class TopicService(
+open class TopicService(
     private val adminClientFactory: AdminClientFactory,
     private val futureUtils: FutureUtils
 ) {
 
-    fun list(cluster: Cluster): Flux<Topic> {
+    open fun list(cluster: Cluster): Flux<Topic> {
         val adminClient = adminClientFactory.build(cluster)
         val options = ListTopicsOptions()
         options.listInternal(true)
@@ -42,7 +41,7 @@ class TopicService(
         }
     }
 
-    fun get(@NotBlank topic: String, cluster: Cluster): Mono<TopicDescription> {
+    open fun get(@NotBlank topic: String, cluster: Cluster): Mono<TopicDescription> {
         val adminClient = adminClientFactory.build(cluster)
         val resource = ConfigResource(ConfigResource.Type.TOPIC, topic)
 
@@ -73,7 +72,7 @@ class TopicService(
         }
     }
 
-    fun add(@Valid topicConfig: NewTopicConfig, cluster: Cluster): Mono<Void> {
+    open fun add(@Valid topicConfig: NewTopicConfig, cluster: Cluster): Mono<Void> {
         val adminClient = adminClientFactory.build(cluster)
         val newTopic = NewTopic(topicConfig.name, topicConfig.numPartitions, topicConfig.replicationFactor)
         newTopic.configs(topicConfig.configMap())
@@ -81,7 +80,7 @@ class TopicService(
         return futureUtils.toMono(future.all())
     }
 
-    fun addPartition(@Valid partitions: Set<NewPartition>, cluster: Cluster): Mono<Void> {
+    open fun addPartition(@Valid partitions: Set<NewPartition>, cluster: Cluster): Mono<Void> {
         val adminClient = adminClientFactory.build(cluster)
         val newPartitions = partitions.associate {
             it.topic to NewPartitions.increaseTo(it.numPartitions)
@@ -90,7 +89,7 @@ class TopicService(
         return futureUtils.toMono(future.all())
     }
 
-    fun edit(@Valid topicConfig: UpdateTopicConfig, cluster: Cluster): Mono<Void> {
+    open fun edit(@Valid topicConfig: UpdateTopicConfig, cluster: Cluster): Mono<Void> {
         val adminClient = adminClientFactory.build(cluster)
         val configs = topicConfig.configMap().entries.map {
             val configEntry = ConfigEntry(it.key, it.value)
@@ -102,7 +101,7 @@ class TopicService(
         return futureUtils.toMono(future.all())
     }
 
-    fun delete(@NotBlank topic: String, cluster: Cluster): Mono<Void> {
+    open fun delete(@NotBlank topic: String, cluster: Cluster): Mono<Void> {
         val adminClient = adminClientFactory.build(cluster)
         val future = adminClient.deleteTopics(listOf(topic))
         return futureUtils.toMono(future.all())

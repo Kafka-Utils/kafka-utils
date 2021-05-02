@@ -12,7 +12,7 @@ import javax.validation.Valid
 
 @Singleton
 @Transactional
-open class CusterService(
+open class ClusterService(
     private val custerRepository: CusterRepository,
     private val messages: Messages
 ) {
