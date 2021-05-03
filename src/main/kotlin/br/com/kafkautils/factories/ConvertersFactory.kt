@@ -3,8 +3,9 @@ package br.com.kafkautils.factories
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.context.annotation.Factory
 import io.micronaut.core.convert.TypeConverter
-import java.util.*
+import java.util.Optional
 import javax.inject.Singleton
+import kotlin.collections.HashSet
 
 @Factory
 class ConvertersFactory(

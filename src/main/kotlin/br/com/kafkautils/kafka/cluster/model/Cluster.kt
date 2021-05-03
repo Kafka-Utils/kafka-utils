@@ -6,13 +6,10 @@ import io.micronaut.data.annotation.DateUpdated
 import io.micronaut.data.annotation.GeneratedValue
 import io.micronaut.data.annotation.Id
 import io.micronaut.data.annotation.MappedEntity
-import io.micronaut.data.annotation.MappedProperty
 import io.micronaut.data.annotation.TypeDef
-import io.micronaut.data.jdbc.annotation.ColumnTransformer
 import io.micronaut.data.model.DataType
 import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 @MappedEntity
@@ -29,7 +26,6 @@ data class Cluster(
     val name: String,
     @field: Size(min = 1)
     @field: NotBlankElement
-    //@field: ColumnTransformer(read = "JSON_PRETTY(brokers)")
     @field: TypeDef(type = DataType.STRING)
     val brokers: Set<String>,
     val requestTimeoutMs: Long = 5000

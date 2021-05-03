@@ -5,5 +5,5 @@ import javax.validation.constraints.NotBlank
 
 data class NewPartition(
     @field: NotBlank val topic: String,
-    @field: Min(1)  val numPartitions: Int
+    @field: Min(1) val numPartitions: Int
 )

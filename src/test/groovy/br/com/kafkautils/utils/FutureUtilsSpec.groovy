@@ -93,7 +93,7 @@ class FutureUtilsSpec extends Specification {
 		given:
 		ExecutorService executorService = Executors.newFixedThreadPool(1)
 		Future<Integer> future = executorService.submit({
-			throw new IllegalStateException("ops")
+			throw new IllegalStateException('ops')
 		} as Callable<Integer>) as Future<Integer>
 		executorService.shutdownNow()
 		when:

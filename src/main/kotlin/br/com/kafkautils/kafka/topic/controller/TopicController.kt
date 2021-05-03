@@ -19,9 +19,11 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
-import javax.validation.Valid
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
+import javax.validation.Valid
 
 @Controller("/cluster")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -42,7 +44,7 @@ open class TopicController(
     @Get("/{clusterId}/topic/{topic}")
     open fun get(@PathVariable clusterId: Int, @PathVariable topic: String): Mono<TopicDescription> {
         return clusterService.get(clusterId).flatMap {
-            topicService.get(topic, it)
+            topicService.get(URLDecoder.decode(topic, StandardCharsets.UTF_8), it)
         }
     }
 
@@ -60,7 +62,10 @@ open class TopicController(
     @Patch("/{clusterId}/topic/partitions")
     open fun addPartition(@PathVariable clusterId: Int, @Body @Valid partition: Set<NewPartition>): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
-            topicService.addPartition(partition, it)
+            val decodePartition = partition.map { newPartition ->
+                newPartition.copy(topic = URLDecoder.decode(newPartition.topic, StandardCharsets.UTF_8))
+            }.toSet()
+            topicService.addPartition(decodePartition, it)
         }
     }
 
@@ -69,7 +74,7 @@ open class TopicController(
     @Put("/{clusterId}/topic/{topic}")
     open fun edit(@PathVariable clusterId: Int, @PathVariable topic: String, @Body @Valid config: TopicConfig): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
-            val updateTopicConfig = UpdateTopicConfig(topic, config)
+            val updateTopicConfig = UpdateTopicConfig(URLDecoder.decode(topic, StandardCharsets.UTF_8), config)
             topicService.edit(updateTopicConfig, it)
         }
     }
@@ -79,7 +84,7 @@ open class TopicController(
     @Delete("/{clusterId}/topic/{topic}")
     open fun delete(@PathVariable clusterId: Int, @PathVariable topic: String): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
-            topicService.delete(topic, it)
+            topicService.delete(URLDecoder.decode(topic, StandardCharsets.UTF_8), it)
         }
     }
 }

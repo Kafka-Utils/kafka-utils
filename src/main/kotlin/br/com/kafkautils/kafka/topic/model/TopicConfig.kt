@@ -1,35 +1,35 @@
 package br.com.kafkautils.kafka.topic.model
 
-import java.math.BigDecimal
 import org.apache.kafka.clients.admin.Config
+import java.math.BigDecimal
 
 data class TopicConfig(
-    val cleanupPolicy: String, //cleanup.policy
-    val compressionType: String, //compression.type
-    val deleteRetentionMs: Long, //delete.retention.ms
-    val fileDeleteDelayMs: Long, //file.delete.delay.ms
-    val flushMessages: Long, //flush.messages
-    val flushMs: Long, //flush.ms
-    val followerReplicationThrottledReplicas: String, //follower.replication.throttled.replicas
-    val indexIntervalBytes: Int, //index.interval.bytes
-    val leaderReplicationThrottledReplicas: String, //leader.replication.throttled.replicas
-    val maxCompactionLagMs: Long, //max.compaction.lag.ms
-    val maxMessageBytes: Int, //max.message.bytes
-    val messageFormatVersion: String, //message.format.version
-    val messageTimestampDifferenceMaxMs: Long, //message.timestamp.difference.max.ms
-    val messageTimestampType: String, //message.timestamp.type
-    val minCleanableDirtyRatio: BigDecimal, //min.cleanable.dirty.ratio
-    val minCompactionLagMs: Long, //min.compaction.lag.ms
-    val minInsyncReplicas: Int, //min.insync.replicas
-    val preallocate: Boolean, //preallocate
-    val retentionBytes: Long, //retention.bytes
-    val retentionMs: Long, //retention.ms
-    val segmentBytes: Int, //segment.bytes
-    val segmentIndexBytes: Int, //segment.index.bytes
-    val segmentJitterMs: Long, //segment.jitter.ms
-    val segmentMs: Long, //segment.ms
-    val uncleanLeaderElectionEnable: Boolean, //unclean.leader.election.enable
-    val messageDownconversionEnable: Boolean, //message.downconversion.enable
+    val cleanupPolicy: String, // cleanup.policy
+    val compressionType: String, // compression.type
+    val deleteRetentionMs: Long, // delete.retention.ms
+    val fileDeleteDelayMs: Long, // file.delete.delay.ms
+    val flushMessages: Long, // flush.messages
+    val flushMs: Long, // flush.ms
+    val followerReplicationThrottledReplicas: String, // follower.replication.throttled.replicas
+    val indexIntervalBytes: Int, // index.interval.bytes
+    val leaderReplicationThrottledReplicas: String, // leader.replication.throttled.replicas
+    val maxCompactionLagMs: Long, // max.compaction.lag.ms
+    val maxMessageBytes: Int, // max.message.bytes
+    val messageFormatVersion: String, // message.format.version
+    val messageTimestampDifferenceMaxMs: Long, // message.timestamp.difference.max.ms
+    val messageTimestampType: String, // message.timestamp.type
+    val minCleanableDirtyRatio: BigDecimal, // min.cleanable.dirty.ratio
+    val minCompactionLagMs: Long, // min.compaction.lag.ms
+    val minInsyncReplicas: Int, // min.insync.replicas
+    val preallocate: Boolean, // preallocate
+    val retentionBytes: Long, // retention.bytes
+    val retentionMs: Long, // retention.ms
+    val segmentBytes: Int, // segment.bytes
+    val segmentIndexBytes: Int, // segment.index.bytes
+    val segmentJitterMs: Long, // segment.jitter.ms
+    val segmentMs: Long, // segment.ms
+    val uncleanLeaderElectionEnable: Boolean, // unclean.leader.election.enable
+    val messageDownconversionEnable: Boolean, // message.downconversion.enable
 ) {
 
     constructor(config: Config) : this(

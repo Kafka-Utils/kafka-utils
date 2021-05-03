@@ -14,6 +14,7 @@ class KafkaIntegrationSpec extends IntegrationSpec {
 	@Shared
 	KafkaContainer kafka
 
+	@Override
 	void cleanupSpec() {
 		kafka?.stop()
 	}
@@ -22,7 +23,7 @@ class KafkaIntegrationSpec extends IntegrationSpec {
 	Map<String, String> getProperties() {
 		ExecutorService executorService = Executors.newFixedThreadPool(2)
 		try {
-			String kafkaImage = System.getenv("KAFKA_CONTAINER_IMAGE") ?: "confluentinc/cp-kafka:5.4.3"
+			String kafkaImage = System.getenv('KAFKA_CONTAINER_IMAGE') ?: 'confluentinc/cp-kafka:5.4.3'
 			kafka = new KafkaContainer(DockerImageName.parse(kafkaImage)).withTmpFs([
 					'/var/lib/zookeeper/data': 'rw',
 					'/etc/zookeeper/secrets': 'rw',
@@ -41,7 +42,6 @@ class KafkaIntegrationSpec extends IntegrationSpec {
 		} finally {
 			executorService.shutdown()
 		}
-
 	}
 
 }

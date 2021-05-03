@@ -10,9 +10,6 @@ import br.com.kafkautils.kafka.topic.model.TopicConfig
 import br.com.kafkautils.kafka.topic.model.TopicDescription
 import br.com.kafkautils.kafka.topic.model.UpdateTopicConfig
 import br.com.kafkautils.utils.FutureUtils
-import javax.inject.Singleton
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
 import org.apache.kafka.clients.admin.AlterConfigOp
 import org.apache.kafka.clients.admin.ConfigEntry
 import org.apache.kafka.clients.admin.ListTopicsOptions
@@ -21,7 +18,9 @@ import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.common.config.ConfigResource
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-
+import javax.inject.Singleton
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
 
 @Singleton
 open class TopicService(

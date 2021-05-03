@@ -28,7 +28,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 	@Inject
 	private MockAccessTokenProvider accessTokenProvider
 
-	def "Add"() {
+	void "Add"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster',
 				['localhost'].toSet(),
@@ -44,7 +44,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		result.brokers == dto.brokers
 	}
 
-	def "Update"() {
+	void "Update"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster a',
 				['localhost:19092', 'localhost:9092'].toSet(),
@@ -60,7 +60,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		result.brokers == dto.brokers
 	}
 
-	def "List"() {
+	void "List"() {
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.GET('/')
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
@@ -71,7 +71,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		result*.brokers.flatten().toSet() == ['localhost:19092', 'localhost:9092'].toSet()
 	}
 
-	def "Get"() {
+	void "Get"() {
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.GET('/1')
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
@@ -82,7 +82,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		result.brokers == ['localhost:19092', 'localhost:9092'].toSet()
 	}
 
-	def "try add with viwer"() {
+	void "try add with viwer"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster',
 				['localhost'].toSet(),
@@ -98,7 +98,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		exception.response.status() == HttpStatus.FORBIDDEN
 	}
 
-	def "try update with viwer"() {
+	void "try update with viwer"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster a',
 				['localhost:19092', 'localhost:9092'].toSet(),
@@ -114,7 +114,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		exception.response.status() == HttpStatus.FORBIDDEN
 	}
 
-	def "try list with viwer"() {
+	void "try list with viwer"() {
 		String accessToken = accessTokenProvider.viewerAccessToken
 		MutableHttpRequest request = HttpRequest.GET('/')
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
@@ -124,7 +124,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		notThrown(HttpClientResponseException)
 	}
 
-	def "try get with viwer"() {
+	void "try get with viwer"() {
 		String accessToken = accessTokenProvider.viewerAccessToken
 		MutableHttpRequest request = HttpRequest.GET('/1')
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")

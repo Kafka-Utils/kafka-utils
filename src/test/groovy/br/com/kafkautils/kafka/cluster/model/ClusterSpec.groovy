@@ -1,7 +1,5 @@
 package br.com.kafkautils.kafka.cluster.model
 
-import br.com.kafkautils.security.user.model.Role
-import br.com.kafkautils.security.user.model.User
 import spock.lang.Specification
 
 import javax.validation.ConstraintViolation

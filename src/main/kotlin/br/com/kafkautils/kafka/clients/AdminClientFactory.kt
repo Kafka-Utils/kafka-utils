@@ -1,10 +1,9 @@
 package br.com.kafkautils.kafka.clients
 
 import br.com.kafkautils.kafka.cluster.model.Cluster
-import javax.inject.Singleton
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.admin.AdminClientConfig
-
+import javax.inject.Singleton
 
 @Singleton
 class AdminClientFactory {

@@ -1,5 +1,6 @@
 package br.com.kafkautils.utils
 
+import reactor.core.publisher.Mono
 import java.io.Closeable
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
@@ -9,11 +10,9 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import javax.annotation.PreDestroy
 import javax.inject.Singleton
-import reactor.core.publisher.Mono
-
 
 @Singleton
-class FutureUtils: Closeable {
+class FutureUtils : Closeable {
 
     private val executorService: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
 
