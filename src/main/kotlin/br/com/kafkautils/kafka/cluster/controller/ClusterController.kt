@@ -2,6 +2,7 @@ package br.com.kafkautils.kafka.cluster.controller
 
 import br.com.kafkautils.http.DefaultErrorResponses
 import br.com.kafkautils.kafka.cluster.controller.dto.ClusterCommandDto
+import br.com.kafkautils.kafka.cluster.controller.dto.ClusterDto
 import br.com.kafkautils.kafka.cluster.service.ClusterService
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
@@ -25,7 +26,7 @@ open class ClusterController(
     @Get("/")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @DefaultErrorResponses
-    open fun list(): Flux<ClusterCommandDto> {
+    open fun list(): Flux<ClusterDto> {
         return clusterService.list().map {
             clusterMapper.toDto(it)
         }
@@ -34,7 +35,7 @@ open class ClusterController(
     @Get("/{id}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @DefaultErrorResponses
-    open fun get(@PathVariable id: Int): Mono<ClusterCommandDto> {
+    open fun get(@PathVariable id: Int): Mono<ClusterDto> {
         return clusterService.get(id).map {
             clusterMapper.toDto(it)
         }
@@ -43,7 +44,7 @@ open class ClusterController(
     @Secured("EDITOR", "ADMIN")
     @Post("/")
     @DefaultErrorResponses
-    open fun add(@Valid @Body commandDto: ClusterCommandDto): Mono<ClusterCommandDto> {
+    open fun add(@Valid @Body commandDto: ClusterCommandDto): Mono<ClusterDto> {
         val cluster = clusterMapper.toDomain(commandDto)
         return clusterService.add(cluster).map {
             clusterMapper.toDto(it)
@@ -53,7 +54,7 @@ open class ClusterController(
     @Secured("EDITOR", "ADMIN")
     @Put("/{id}")
     @DefaultErrorResponses
-    open fun update(@PathVariable id: Int, @Valid @Body commandDto: ClusterCommandDto): Mono<ClusterCommandDto> {
+    open fun update(@PathVariable id: Int, @Valid @Body commandDto: ClusterCommandDto): Mono<ClusterDto> {
         return clusterService.get(id).flatMap { cluster ->
             val userToUpdate = clusterMapper.updateFromCommand(commandDto, cluster)
             clusterService.update(userToUpdate).map {

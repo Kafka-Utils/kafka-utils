@@ -23,7 +23,8 @@ class ClusterSpec extends Specification {
 				null,
 				null,
 				name,
-				[].<String> toSet()
+				[].<String> toSet(),
+				5000
 		)
 		when:
 		Set<ConstraintViolation> errors = validator.validateProperty(cluster, 'name')
@@ -43,7 +44,8 @@ class ClusterSpec extends Specification {
 				null,
 				null,
 				'a',
-				brokers.<String> toSet()
+				brokers.<String> toSet(),
+				5000
 		)
 		when:
 		Set<ConstraintViolation> errors = validator.validateProperty(cluster, 'brokers')

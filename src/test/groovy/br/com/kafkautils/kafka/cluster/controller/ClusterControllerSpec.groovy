@@ -1,6 +1,7 @@
 package br.com.kafkautils.kafka.cluster.controller
 
 import br.com.kafkautils.IntegrationSpec
+import br.com.kafkautils.http.handler.ResponseError
 import br.com.kafkautils.kafka.cluster.controller.dto.ClusterCommandDto
 import br.com.kafkautils.kafka.cluster.controller.dto.ClusterDto
 import br.com.kafkautils.security.mock.MockAccessTokenProvider
@@ -40,8 +41,27 @@ class ClusterControllerSpec extends IntegrationSpec {
 		when:
 		ClusterDto result = client.toBlocking().retrieve(request, ClusterDto)
 		then:
+		result.id > 0
 		result.name == dto.name
 		result.brokers == dto.brokers
+		result.requestTimeoutMs == dto.requestTimeoutMs
+	}
+
+	void "try add duplicated name"() {
+		ClusterCommandDto dto = new ClusterCommandDto(
+				'cluster',
+				['localhost'].toSet(),
+				5000
+		)
+		String accessToken = accessTokenProvider.editorAccessToken
+		MutableHttpRequest request = HttpRequest.POST('/', dto)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+		when:
+		client.toBlocking().retrieve(request, ClusterDto)
+		then:
+		HttpClientResponseException exception = thrown()
+		exception.response.status() == HttpStatus.CONFLICT
+		exception.response.getBody(ResponseError).get().message == 'The name cluster is already in use!'
 	}
 
 	void "Update"() {

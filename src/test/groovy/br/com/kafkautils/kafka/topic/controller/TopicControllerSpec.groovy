@@ -40,9 +40,9 @@ class TopicControllerSpec extends KafkaIntegrationSpec {
 	private Cluster cluster
 
 	@Inject
-	ObjectMapper objectMapper
+	private ObjectMapper objectMapper
 
-	private final String topicName =  'topic.test'
+	String topicName =  'topic.test'
 
 	void setupSpec() {
 		cluster = new Cluster(
