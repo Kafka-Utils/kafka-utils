@@ -3,8 +3,8 @@ package br.com.kafkautils.beanvalidator
 import io.micronaut.core.annotation.AnnotationValue
 import io.micronaut.validation.validator.constraints.ConstraintValidator
 import io.micronaut.validation.validator.constraints.ConstraintValidatorContext
-import javax.inject.Singleton
 import org.apache.commons.lang3.StringUtils
+import javax.inject.Singleton
 
 @Singleton
 class NotBlankElementValidator : ConstraintValidator<NotBlankElement, Collection<String>> {

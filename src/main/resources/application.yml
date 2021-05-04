@@ -14,6 +14,9 @@ micronaut:
             generator:
               secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"'
 
+jackson:
+  serialization-inclusion: non_null
+
 password-encoder:
   slat: $2b$10$SwKT/LWOb86Crn6OCzheru
 

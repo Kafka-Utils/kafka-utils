@@ -12,5 +12,6 @@ data class ClusterDto(
     @field: NotBlank
     val name: String,
     @field: Size(min = 1)
-    val brokers: Set<String>
+    val brokers: Set<String>,
+    val requestTimeoutMs: Long
 )

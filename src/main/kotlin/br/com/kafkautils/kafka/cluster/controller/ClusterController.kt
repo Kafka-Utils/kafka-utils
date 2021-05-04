@@ -2,7 +2,8 @@ package br.com.kafkautils.kafka.cluster.controller
 
 import br.com.kafkautils.http.DefaultErrorResponses
 import br.com.kafkautils.kafka.cluster.controller.dto.ClusterCommandDto
-import br.com.kafkautils.kafka.cluster.service.CusterService
+import br.com.kafkautils.kafka.cluster.controller.dto.ClusterDto
+import br.com.kafkautils.kafka.cluster.service.ClusterService
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -16,16 +17,17 @@ import reactor.core.publisher.Mono
 import javax.validation.Valid
 
 @Controller("/cluster")
+@Secured(SecurityRule.IS_AUTHENTICATED)
 open class ClusterController(
-    private val custerService: CusterService,
+    private val clusterService: ClusterService,
     private val clusterMapper: ClusterMapper
 ) {
 
     @Get("/")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @DefaultErrorResponses
-    open fun list(): Flux<ClusterCommandDto> {
-        return custerService.list().map {
+    open fun list(): Flux<ClusterDto> {
+        return clusterService.list().map {
             clusterMapper.toDto(it)
         }
     }
@@ -33,8 +35,8 @@ open class ClusterController(
     @Get("/{id}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @DefaultErrorResponses
-    open fun get(@PathVariable id: Int): Mono<ClusterCommandDto> {
-        return custerService.get(id).map {
+    open fun get(@PathVariable id: Int): Mono<ClusterDto> {
+        return clusterService.get(id).map {
             clusterMapper.toDto(it)
         }
     }
@@ -42,9 +44,9 @@ open class ClusterController(
     @Secured("EDITOR", "ADMIN")
     @Post("/")
     @DefaultErrorResponses
-    open fun add(@Valid @Body commandDto: ClusterCommandDto): Mono<ClusterCommandDto> {
+    open fun add(@Valid @Body commandDto: ClusterCommandDto): Mono<ClusterDto> {
         val cluster = clusterMapper.toDomain(commandDto)
-        return custerService.add(cluster).map {
+        return clusterService.add(cluster).map {
             clusterMapper.toDto(it)
         }
     }
@@ -52,13 +54,12 @@ open class ClusterController(
     @Secured("EDITOR", "ADMIN")
     @Put("/{id}")
     @DefaultErrorResponses
-    open fun update(@PathVariable id: Int, @Valid @Body commandDto: ClusterCommandDto): Mono<ClusterCommandDto> {
-        return custerService.get(id).flatMap { cluster ->
+    open fun update(@PathVariable id: Int, @Valid @Body commandDto: ClusterCommandDto): Mono<ClusterDto> {
+        return clusterService.get(id).flatMap { cluster ->
             val userToUpdate = clusterMapper.updateFromCommand(commandDto, cluster)
-            custerService.update(userToUpdate).map {
+            clusterService.update(userToUpdate).map {
                 clusterMapper.toDto(it)
             }
         }
     }
-
 }

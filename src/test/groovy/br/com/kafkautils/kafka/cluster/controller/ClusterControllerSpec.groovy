@@ -1,6 +1,7 @@
 package br.com.kafkautils.kafka.cluster.controller
 
 import br.com.kafkautils.IntegrationSpec
+import br.com.kafkautils.http.handler.ResponseError
 import br.com.kafkautils.kafka.cluster.controller.dto.ClusterCommandDto
 import br.com.kafkautils.kafka.cluster.controller.dto.ClusterDto
 import br.com.kafkautils.security.mock.MockAccessTokenProvider
@@ -28,10 +29,11 @@ class ClusterControllerSpec extends IntegrationSpec {
 	@Inject
 	private MockAccessTokenProvider accessTokenProvider
 
-	def "Add"() {
+	void "Add"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster',
-				['localhost'].toSet()
+				['localhost'].toSet(),
+				5000
 		)
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.POST('/', dto)
@@ -39,14 +41,34 @@ class ClusterControllerSpec extends IntegrationSpec {
 		when:
 		ClusterDto result = client.toBlocking().retrieve(request, ClusterDto)
 		then:
+		result.id > 0
 		result.name == dto.name
 		result.brokers == dto.brokers
+		result.requestTimeoutMs == dto.requestTimeoutMs
 	}
 
-	def "Update"() {
+	void "try add duplicated name"() {
+		ClusterCommandDto dto = new ClusterCommandDto(
+				'cluster',
+				['localhost'].toSet(),
+				5000
+		)
+		String accessToken = accessTokenProvider.editorAccessToken
+		MutableHttpRequest request = HttpRequest.POST('/', dto)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+		when:
+		client.toBlocking().retrieve(request, ClusterDto)
+		then:
+		HttpClientResponseException exception = thrown()
+		exception.response.status() == HttpStatus.CONFLICT
+		exception.response.getBody(ResponseError).get().message == 'The name cluster is already in use!'
+	}
+
+	void "Update"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster a',
-				['localhost:19092', 'localhost:9092'].toSet()
+				['localhost:19092', 'localhost:9092'].toSet(),
+				10000
 		)
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.PUT('/1', dto)
@@ -58,7 +80,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		result.brokers == dto.brokers
 	}
 
-	def "List"() {
+	void "List"() {
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.GET('/')
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
@@ -69,7 +91,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		result*.brokers.flatten().toSet() == ['localhost:19092', 'localhost:9092'].toSet()
 	}
 
-	def "Get"() {
+	void "Get"() {
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.GET('/1')
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
@@ -80,10 +102,11 @@ class ClusterControllerSpec extends IntegrationSpec {
 		result.brokers == ['localhost:19092', 'localhost:9092'].toSet()
 	}
 
-	def "try add with viwer"() {
+	void "try add with viwer"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster',
-				['localhost'].toSet()
+				['localhost'].toSet(),
+				5000
 		)
 		String accessToken = accessTokenProvider.viewerAccessToken
 		MutableHttpRequest request = HttpRequest.POST('/', dto)
@@ -95,10 +118,11 @@ class ClusterControllerSpec extends IntegrationSpec {
 		exception.response.status() == HttpStatus.FORBIDDEN
 	}
 
-	def "try update with viwer"() {
+	void "try update with viwer"() {
 		ClusterCommandDto dto = new ClusterCommandDto(
 				'cluster a',
-				['localhost:19092', 'localhost:9092'].toSet()
+				['localhost:19092', 'localhost:9092'].toSet(),
+				10000
 		)
 		String accessToken = accessTokenProvider.viewerAccessToken
 		MutableHttpRequest request = HttpRequest.PUT('/1', dto)
@@ -110,7 +134,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		exception.response.status() == HttpStatus.FORBIDDEN
 	}
 
-	def "try list with viwer"() {
+	void "try list with viwer"() {
 		String accessToken = accessTokenProvider.viewerAccessToken
 		MutableHttpRequest request = HttpRequest.GET('/')
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
@@ -120,7 +144,7 @@ class ClusterControllerSpec extends IntegrationSpec {
 		notThrown(HttpClientResponseException)
 	}
 
-	def "try get with viwer"() {
+	void "try get with viwer"() {
 		String accessToken = accessTokenProvider.viewerAccessToken
 		MutableHttpRequest request = HttpRequest.GET('/1')
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")

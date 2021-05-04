@@ -1,7 +1,5 @@
 package br.com.kafkautils.kafka.cluster.model
 
-import br.com.kafkautils.security.user.model.Role
-import br.com.kafkautils.security.user.model.User
 import spock.lang.Specification
 
 import javax.validation.ConstraintViolation
@@ -25,7 +23,8 @@ class ClusterSpec extends Specification {
 				null,
 				null,
 				name,
-				[].<String> toSet()
+				[].<String> toSet(),
+				5000
 		)
 		when:
 		Set<ConstraintViolation> errors = validator.validateProperty(cluster, 'name')
@@ -45,7 +44,8 @@ class ClusterSpec extends Specification {
 				null,
 				null,
 				'a',
-				brokers.<String> toSet()
+				brokers.<String> toSet(),
+				5000
 		)
 		when:
 		Set<ConstraintViolation> errors = validator.validateProperty(cluster, 'brokers')
