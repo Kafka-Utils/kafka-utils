@@ -1,6 +1,6 @@
 package br.com.kafkautils.kafka.topic.model
 
-data class TopicDescription(
+data class TopicDetails(
     val name: String,
     val internal: Boolean,
     val partitions: Set<PartitionInfo>,
