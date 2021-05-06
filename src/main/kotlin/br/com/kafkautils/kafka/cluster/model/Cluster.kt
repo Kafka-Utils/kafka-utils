@@ -29,4 +29,8 @@ data class Cluster(
     @field: TypeDef(type = DataType.STRING)
     val brokers: Set<String>,
     val requestTimeoutMs: Long = 5000
-)
+) {
+    fun brokers(): String {
+        return brokers.joinToString(",")
+    }
+}

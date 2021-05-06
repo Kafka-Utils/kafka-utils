@@ -3,6 +3,7 @@ package br.com.kafkautils.kafka.consumergroups.controller
 import br.com.kafkautils.KafkaIntegrationSpec
 import br.com.kafkautils.kafka.cluster.model.Cluster
 import br.com.kafkautils.kafka.cluster.service.ClusterService
+import br.com.kafkautils.kafka.consumer.service.ConsumerService
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroup
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroupTopic
 import br.com.kafkautils.kafka.topic.model.NewTopicConfig
@@ -16,13 +17,11 @@ import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
-import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerRecords
-import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import spock.lang.Shared
 
@@ -51,6 +50,10 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 
 	@Inject
 	private ObjectMapper objectMapper
+
+	@Shared
+	@Inject
+	private ConsumerService consumerService
 
 	@Shared
 	String topicName = 'topic.test'
@@ -85,15 +88,7 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 			producer.send(new ProducerRecord<String, String>(topicName, it.toString(), it.toString()))
 		}
 
-		Properties consumerProperties = new Properties()
-		consumerProperties[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafka.bootstrapServers
-		consumerProperties[ConsumerConfig.CLIENT_ID_CONFIG] = 'client1'
-		consumerProperties[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer.name
-		consumerProperties[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer.name
-		consumerProperties[ConsumerConfig.GROUP_ID_CONFIG] = consumerGroup1
-		consumerProperties[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = 'false'
-		consumerProperties[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = 'earliest'
-		KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(consumerProperties)
+		Consumer<String, String> consumer = consumerService.buildSimpleConsumer(cluster, consumerGroup1)
 		consumer.subscribe([topicName])
 		int count = 0
 		while (count < 10) {
@@ -103,6 +98,16 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 			}
 			count += records.count()
 		}
+
+		(11..15).forEach {
+			producer.send(new ProducerRecord<String, String>(topicName, it.toString(), it.toString()))
+		}
+		while (count < 15) {
+			ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1))
+			count += records.count()
+		}
+		producer.close()
+		consumer.close()
 	}
 
 	def "List"() {
@@ -133,5 +138,7 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 		consumerGroupTopic.topic == topicName
 		consumerGroupTopic.partitionsOffsets.size() == 2
 		consumerGroupTopic.partitionsOffsets*.offset.toSet() == [6L, 4L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lastOffset.toSet() == [8L, 7L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [3L, 2L].toSet()
 	}
 }

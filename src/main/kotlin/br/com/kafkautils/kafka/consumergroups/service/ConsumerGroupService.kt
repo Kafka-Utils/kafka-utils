@@ -2,6 +2,7 @@ package br.com.kafkautils.kafka.consumergroups.service
 
 import br.com.kafkautils.kafka.clients.AdminClientFactory
 import br.com.kafkautils.kafka.cluster.model.Cluster
+import br.com.kafkautils.kafka.consumer.service.ConsumerService
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroup
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroupTopic
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroupTopicPartitionOffset
@@ -12,7 +13,8 @@ import reactor.core.publisher.Flux
 @Singleton
 open class ConsumerGroupService(
     private val adminClientFactory: AdminClientFactory,
-    private val futureUtils: FutureUtils
+    private val futureUtils: FutureUtils,
+    private val consumerService: ConsumerService
 ) {
     open fun list(cluster: Cluster): Flux<ConsumerGroup> {
         val client = adminClientFactory.build(cluster)
@@ -31,22 +33,34 @@ open class ConsumerGroupService(
     open fun details(groupId: String, cluster: Cluster): Flux<ConsumerGroupTopic> {
         val client = adminClientFactory.build(cluster)
         val result = client.listConsumerGroupOffsets(groupId)
-        return futureUtils.toMono(result.partitionsToOffsetAndMetadata()).flatMapIterable { map ->
-            map.entries.groupBy {
-                it.key.topic()
-            }.entries.map { entry ->
-                ConsumerGroupTopic(
-                    groupId = groupId,
-                    topic = entry.key,
-                    partitionsOffsets = entry.value.map {
-                        ConsumerGroupTopicPartitionOffset(
-                            partition = it.key.partition(),
-                            offset = it.value.offset(),
-                            leaderEpoch = it.value.leaderEpoch().orElse(null)
-                        )
-                    }.toSet()
-                )
+        return futureUtils.toMono(result.partitionsToOffsetAndMetadata()).flatMapMany { map ->
+            val partitions = map.keys
+            consumerService.listOffsetsOffTopic(cluster, partitions).flatMapIterable { offsetsOffTopics ->
+                map.entries.groupBy {
+                    it.key.topic()
+                }.entries.map { entry ->
+                    ConsumerGroupTopic(
+                        groupId = groupId,
+                        topic = entry.key,
+                        partitionsOffsets = entry.value.map {
+                            val offset = offsetsOffTopics[it.key] ?: 0
+                            ConsumerGroupTopicPartitionOffset(
+                                partition = it.key.partition(),
+                                offset = it.value.offset(),
+                                leaderEpoch = it.value.leaderEpoch().orElse(null),
+                                lastOffset = offset,
+                                lag = offset - it.value.offset()
+                            )
+                        }.toSet()
+                    )
+                }
             }
         }
     }
+
+//    open fun resetOffset(cluster: Cluster): Flux<ConsumerGroup> {
+//        val client = adminClientFactory.build(cluster)
+//        val result = client.listConsumerGroupOffsets()
+//        return futureUtils.toMono(result.all())
+//    }
 }
