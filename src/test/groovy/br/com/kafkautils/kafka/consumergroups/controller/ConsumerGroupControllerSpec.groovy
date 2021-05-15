@@ -177,4 +177,39 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 		consumerGroupTopic.partitionsOffsets*.lastOffset.toSet() == [8L, 7L].toSet()
 		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [8L, 7L].toSet()
 	}
+
+	def "reset using shift"() {
+		setup:
+		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ToOffset>(
+				consumerGroup1,
+				[
+						new ToOffset(topicName, 0, 6),
+						new ToOffset(topicName, 1, 4),
+				].toSet()
+		)
+		consumerGroupService.resetOffsetToOffset(cluster, topicsToResetOffset).block()
+		topicsToResetOffset = new TopicsToResetOffset<ToOffset>(
+				consumerGroup1,
+				[
+				        new ToOffset(topicName, 0, -2),
+				        new ToOffset(topicName, 1, 2),
+				].toSet()
+		)
+		String accessToken = accessTokenProvider.editorAccessToken
+		MutableHttpRequest request = HttpRequest.PUT("/${cluster.id}/consumer-group/$consumerGroup1/offset/shift", topicsToResetOffset)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+		when:
+		HttpResponse response = client.toBlocking().exchange(request)
+		List<ConsumerGroupTopic> consumerGroupTopics = consumerGroupService.details(consumerGroup1, cluster).collectList().block()
+		ConsumerGroupTopic consumerGroupTopic = consumerGroupTopics[0]
+		then:
+		response.status() == HttpStatus.OK
+		consumerGroupTopics.size() == 1
+		consumerGroupTopic.groupId == consumerGroup1
+		consumerGroupTopic.topic == topicName
+		consumerGroupTopic.partitionsOffsets.size() == 2
+		consumerGroupTopic.partitionsOffsets*.offset.toSet() == [4L, 6L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lastOffset.toSet() == [8L, 7L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [2L, 3L].toSet()
+	}
 }

@@ -14,6 +14,7 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata
 import org.apache.kafka.common.TopicPartition
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.util.function.Tuple3
 
 @Singleton
 open class ConsumerGroupService(
@@ -72,5 +73,29 @@ open class ConsumerGroupService(
         }
         val result = client.alterConsumerGroupOffsets(topicsToResetOffset.groupId, map)
         return futureUtils.toMono(result.all())
+    }
+
+    open fun resetOffsetShift(cluster: Cluster, topicsToResetOffset: TopicsToResetOffset<ToOffset>): Mono<Void> {
+        val client = adminClientFactory.build(cluster)
+        val topics = topicsToResetOffset.topicsAndOffsets.map { it.topic }
+        return this.details(topicsToResetOffset.groupId, cluster).filter {
+            it.topic in topics
+        }.collectList().flatMap { consumerGroupTopics ->
+            val offsetByTopicPartition = consumerGroupTopics.flatMap {
+                it.partitionsOffsets.map { topicPartition ->
+                    Triple(it.topic, topicPartition.partition, topicPartition.offset)
+                }
+            }.associate {
+                "${it.first}-${it.second}" to it.third
+            }
+            val map = topicsToResetOffset.topicsAndOffsets.associate {
+                val currrentOffset = offsetByTopicPartition.getValue("${it.topic}-${it.partition}")
+                val topicPartition = TopicPartition(it.topic, it.partition)
+                val offsetAndMetadata = OffsetAndMetadata(currrentOffset + it.offset)
+                topicPartition to offsetAndMetadata
+            }
+            val result = client.alterConsumerGroupOffsets(topicsToResetOffset.groupId, map)
+            futureUtils.toMono(result.all())
+        }
     }
 }

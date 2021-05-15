@@ -48,4 +48,13 @@ open class ConsumerGroupController(
         }
     }
 
+
+    @DefaultErrorResponses
+    @Put("/{clusterId}/consumer-group/{groupId}/offset/shift")
+    open fun resetOffsetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsToResetOffset: TopicsToResetOffset<ToOffset>): Mono<Void> {
+        return clusterService.get(clusterId).flatMap {
+            consumerGroupService.resetOffsetShift(it, topicsToResetOffset)
+        }
+    }
+
 }
