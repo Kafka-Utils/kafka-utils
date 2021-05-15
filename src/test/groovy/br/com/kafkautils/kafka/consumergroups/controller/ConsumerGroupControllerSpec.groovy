@@ -6,6 +6,9 @@ import br.com.kafkautils.kafka.cluster.service.ClusterService
 import br.com.kafkautils.kafka.consumer.service.ConsumerService
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroup
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroupTopic
+import br.com.kafkautils.kafka.consumergroups.model.ToOffset
+import br.com.kafkautils.kafka.consumergroups.model.TopicsToResetOffset
+import br.com.kafkautils.kafka.consumergroups.service.ConsumerGroupService
 import br.com.kafkautils.kafka.topic.model.NewTopicConfig
 import br.com.kafkautils.kafka.topic.service.TopicService
 import br.com.kafkautils.security.mock.MockAccessTokenProvider
@@ -13,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpHeaders
 import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.MutableHttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
@@ -54,6 +59,10 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 	@Shared
 	@Inject
 	private ConsumerService consumerService
+
+	@Shared
+	@Inject
+	ConsumerGroupService consumerGroupService
 
 	@Shared
 	String topicName = 'topic.test'
@@ -140,5 +149,32 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 		consumerGroupTopic.partitionsOffsets*.offset.toSet() == [6L, 4L].toSet()
 		consumerGroupTopic.partitionsOffsets*.lastOffset.toSet() == [8L, 7L].toSet()
 		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [3L, 2L].toSet()
+	}
+
+	def "reset using offset"() {
+		given:
+		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ToOffset>(
+				consumerGroup1,
+				[
+				        new ToOffset(topicName, 0, 0),
+				        new ToOffset(topicName, 1, 0),
+				].toSet()
+		)
+		String accessToken = accessTokenProvider.editorAccessToken
+		MutableHttpRequest request = HttpRequest.PUT("/${cluster.id}/consumer-group/$consumerGroup1/offset/offsets", topicsToResetOffset)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+		when:
+		HttpResponse response = client.toBlocking().exchange(request)
+		List<ConsumerGroupTopic> consumerGroupTopics = consumerGroupService.details(consumerGroup1, cluster).collectList().block()
+		ConsumerGroupTopic consumerGroupTopic = consumerGroupTopics[0]
+		then:
+		response.status() == HttpStatus.OK
+		consumerGroupTopics.size() == 1
+		consumerGroupTopic.groupId == consumerGroup1
+		consumerGroupTopic.topic == topicName
+		consumerGroupTopic.partitionsOffsets.size() == 2
+		consumerGroupTopic.partitionsOffsets*.offset.toSet() == [0L, 0L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lastOffset.toSet() == [8L, 7L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [8L, 7L].toSet()
 	}
 }
