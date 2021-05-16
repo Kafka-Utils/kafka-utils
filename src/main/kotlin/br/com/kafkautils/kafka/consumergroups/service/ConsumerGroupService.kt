@@ -8,13 +8,13 @@ import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroupTopic
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroupTopicPartitionOffset
 import br.com.kafkautils.kafka.consumergroups.model.TopicsToResetOffset
 import br.com.kafkautils.kafka.consumergroups.model.ToOffset
+import br.com.kafkautils.kafka.consumergroups.model.ToTime
 import br.com.kafkautils.utils.FutureUtils
 import javax.inject.Singleton
 import org.apache.kafka.clients.consumer.OffsetAndMetadata
 import org.apache.kafka.common.TopicPartition
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.util.function.Tuple3
 
 @Singleton
 open class ConsumerGroupService(
@@ -77,23 +77,31 @@ open class ConsumerGroupService(
 
     open fun resetOffsetShift(cluster: Cluster, topicsToResetOffset: TopicsToResetOffset<ToOffset>): Mono<Void> {
         val client = adminClientFactory.build(cluster)
-        val topics = topicsToResetOffset.topicsAndOffsets.map { it.topic }
-        return this.details(topicsToResetOffset.groupId, cluster).filter {
-            it.topic in topics
-        }.collectList().flatMap { consumerGroupTopics ->
-            val offsetByTopicPartition = consumerGroupTopics.flatMap {
-                it.partitionsOffsets.map { topicPartition ->
-                    Triple(it.topic, topicPartition.partition, topicPartition.offset)
-                }
-            }.associate {
-                "${it.first}-${it.second}" to it.third
-            }
+        val result = client.listConsumerGroupOffsets(topicsToResetOffset.groupId)
+        return futureUtils.toMono(result.partitionsToOffsetAndMetadata()).flatMap { offsetByTopicPartition ->
             val map = topicsToResetOffset.topicsAndOffsets.associate {
-                val currrentOffset = offsetByTopicPartition.getValue("${it.topic}-${it.partition}")
                 val topicPartition = TopicPartition(it.topic, it.partition)
-                val offsetAndMetadata = OffsetAndMetadata(currrentOffset + it.offset)
+                val currrentOffset = offsetByTopicPartition.getValue(topicPartition)
+                val offsetAndMetadata = OffsetAndMetadata(currrentOffset.offset() + it.offset)
                 topicPartition to offsetAndMetadata
             }
+            val alterConsumerGroupOffsetsResult = client.alterConsumerGroupOffsets(topicsToResetOffset.groupId, map)
+            futureUtils.toMono(alterConsumerGroupOffsetsResult.all())
+        }
+    }
+
+    open fun resetOffsetToTime(cluster: Cluster, topicsToResetOffset: TopicsToResetOffset<ToTime>): Mono<Void> {
+        val client = adminClientFactory.build(cluster)
+        val partitions = topicsToResetOffset.topicsAndOffsets.associate {
+            TopicPartition(it.topic, it.partition) to it.time
+        }
+        return consumerService.listOffsetsOffTopicAtTime(cluster, partitions).flatMap { offsetByTopicPartition ->
+            val map = topicsToResetOffset.topicsAndOffsets.map {
+                val topicPartition = TopicPartition(it.topic, it.partition)
+                val offset = offsetByTopicPartition[topicPartition]
+                val offsetAndMetadata = if (offset == null) null else OffsetAndMetadata(offset.offset())
+                topicPartition to offsetAndMetadata
+            }.filter { it.second != null }.toMap()
             val result = client.alterConsumerGroupOffsets(topicsToResetOffset.groupId, map)
             futureUtils.toMono(result.all())
         }

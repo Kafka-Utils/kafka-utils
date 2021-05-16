@@ -5,6 +5,7 @@ import br.com.kafkautils.kafka.cluster.service.ClusterService
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroup
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroupTopic
 import br.com.kafkautils.kafka.consumergroups.model.ToOffset
+import br.com.kafkautils.kafka.consumergroups.model.ToTime
 import br.com.kafkautils.kafka.consumergroups.model.TopicsToResetOffset
 import br.com.kafkautils.kafka.consumergroups.service.ConsumerGroupService
 import io.micronaut.http.annotation.Body
@@ -54,6 +55,14 @@ open class ConsumerGroupController(
     open fun resetOffsetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsToResetOffset: TopicsToResetOffset<ToOffset>): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
             consumerGroupService.resetOffsetShift(it, topicsToResetOffset)
+        }
+    }
+
+    @DefaultErrorResponses
+    @Put("/{clusterId}/consumer-group/{groupId}/offset/time")
+    open fun resetOffsetToTime(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsToResetOffset: TopicsToResetOffset<ToTime>): Mono<Void> {
+        return clusterService.get(clusterId).flatMap {
+            consumerGroupService.resetOffsetToTime(it, topicsToResetOffset)
         }
     }
 

@@ -2,6 +2,7 @@ package br.com.kafkautils.kafka.consumer.service
 
 import br.com.kafkautils.kafka.cluster.model.Cluster
 import io.micronaut.scheduling.TaskExecutors
+import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
@@ -11,6 +12,7 @@ import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.clients.consumer.OffsetAndTimestamp
 import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.serialization.StringDeserializer
 import reactor.core.publisher.Mono
@@ -29,6 +31,14 @@ class ConsumerService(
         return Mono.fromCallable {
             val consumer = getSimpleConsumer(cluster)
             consumer.endOffsets(topics)
+        }.subscribeOn(scheduler)
+    }
+
+    fun listOffsetsOffTopicAtTime(cluster: Cluster, topics: Map<TopicPartition, ZonedDateTime>): Mono<Map<TopicPartition, OffsetAndTimestamp>> {
+        return Mono.fromCallable {
+            val consumer = getSimpleConsumer(cluster)
+            val partitionTimes = topics.mapValues { it.value.toInstant().toEpochMilli() }
+            consumer.offsetsForTimes(partitionTimes)
         }.subscribeOn(scheduler)
     }
 
