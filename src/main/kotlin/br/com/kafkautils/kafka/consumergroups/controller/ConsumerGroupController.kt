@@ -16,6 +16,7 @@ import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Put
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
+import io.swagger.v3.oas.annotations.media.Schema
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -44,7 +45,7 @@ open class ConsumerGroupController(
 
     @DefaultErrorResponses
     @Put("/{clusterId}/consumer-group/{groupId}/offset/offsets")
-    open fun resetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsResetToResetOffset: TopicsToResetOffset<ResetToOffset>): Mono<Void> {
+    open fun resetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Schema(name = "TopicsToResetOffsetResetToOffset") @Body topicsResetToResetOffset: TopicsToResetOffset<ResetToOffset>): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
             consumerGroupService.resetOffsetToOffset(it, topicsResetToResetOffset)
         }
@@ -52,7 +53,7 @@ open class ConsumerGroupController(
 
     @DefaultErrorResponses
     @Put("/{clusterId}/consumer-group/{groupId}/offset/shift")
-    open fun resetOffsetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsResetToResetOffset: TopicsToResetOffset<ResetToOffset>): Mono<Void> {
+    open fun resetOffsetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Schema(name = "TopicsToResetOffsetResetToOffset") @Body topicsResetToResetOffset: TopicsToResetOffset<ResetToOffset>): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
             consumerGroupService.resetOffsetShift(it, topicsResetToResetOffset)
         }
@@ -60,7 +61,7 @@ open class ConsumerGroupController(
 
     @DefaultErrorResponses
     @Put("/{clusterId}/consumer-group/{groupId}/offset/time")
-    open fun resetOffsetToTime(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsResetToResetOffset: TopicsToResetOffset<ResetToTime>): Mono<Void> {
+    open fun resetOffsetToTime(@PathVariable clusterId: Int, @PathVariable groupId: String, @Schema(name = "TopicsToResetOffsetResetToTime") @Body topicsResetToResetOffset: TopicsToResetOffset<ResetToTime>): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
             consumerGroupService.resetOffsetToTime(it, topicsResetToResetOffset)
         }
@@ -68,7 +69,7 @@ open class ConsumerGroupController(
 
     @DefaultErrorResponses
     @Put("/{clusterId}/consumer-group/{groupId}/offset")
-    open fun resetOffsetTo(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsResetToResetOffset: TopicsToResetOffset<ResetTo>): Mono<Void> {
+    open fun resetOffsetTo(@PathVariable clusterId: Int, @PathVariable groupId: String, @Schema(name = "TopicsToResetOffsetResetTo") @Body topicsResetToResetOffset: TopicsToResetOffset<ResetTo>): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
             consumerGroupService.resetOffsetTo(it, topicsResetToResetOffset)
         }
