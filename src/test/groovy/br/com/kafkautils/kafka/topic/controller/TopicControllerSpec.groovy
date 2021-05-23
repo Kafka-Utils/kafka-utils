@@ -6,7 +6,7 @@ import br.com.kafkautils.kafka.cluster.service.ClusterService
 import br.com.kafkautils.kafka.topic.model.NewPartition
 import br.com.kafkautils.kafka.topic.model.NewTopicConfig
 import br.com.kafkautils.kafka.topic.model.Topic
-import br.com.kafkautils.kafka.topic.model.TopicDescription
+import br.com.kafkautils.kafka.topic.model.TopicDetails
 import br.com.kafkautils.security.mock.MockAccessTokenProvider
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.core.type.Argument
@@ -78,7 +78,7 @@ class TopicControllerSpec extends KafkaIntegrationSpec {
 		MutableHttpRequest request = HttpRequest.GET("/${cluster.id}/topic/$topicName")
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
 		when:
-		TopicDescription topicDescription = client.toBlocking().retrieve(request, TopicDescription)
+		TopicDetails topicDescription = client.toBlocking().retrieve(request, TopicDetails)
 		then:
 		topicDescription
 		topicDescription.name == topicName
@@ -93,7 +93,7 @@ class TopicControllerSpec extends KafkaIntegrationSpec {
 		MutableHttpRequest request = HttpRequest.GET("/${cluster.id}/topic/$topicName")
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
 		when:
-		TopicDescription topicDescription = client.toBlocking().retrieve(request, TopicDescription)
+		TopicDetails topicDescription = client.toBlocking().retrieve(request, TopicDetails)
 		then:
 		topicDescription
 		when:
@@ -104,7 +104,7 @@ class TopicControllerSpec extends KafkaIntegrationSpec {
 		client.toBlocking().exchange(requestUpdate)
 		request = HttpRequest.GET("/${cluster.id}/topic/$topicName")
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
-		topicDescription = client.toBlocking().retrieve(request, TopicDescription)
+		topicDescription = client.toBlocking().retrieve(request, TopicDetails)
 		then:
 		topicDescription.topicConfig.cleanupPolicy == 'compact'
 	}
@@ -119,7 +119,7 @@ class TopicControllerSpec extends KafkaIntegrationSpec {
 		client.toBlocking().exchange(request)
 		request = HttpRequest.GET("/${cluster.id}/topic/$topicName")
 				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
-		TopicDescription topicDescription = client.toBlocking().retrieve(request, TopicDescription)
+		TopicDetails topicDescription = client.toBlocking().retrieve(request, TopicDetails)
 		then:
 		topicDescription.name == topicName
 		topicDescription.partitions.size() == 2

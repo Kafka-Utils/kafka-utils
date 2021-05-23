@@ -24,13 +24,14 @@ class KafkaIntegrationSpec extends IntegrationSpec {
 		ExecutorService executorService = Executors.newFixedThreadPool(2)
 		try {
 			String kafkaImage = System.getenv('KAFKA_CONTAINER_IMAGE') ?: 'confluentinc/cp-kafka:5.4.3'
-			kafka = new KafkaContainer(DockerImageName.parse(kafkaImage)).withTmpFs([
-					'/var/lib/zookeeper/data': 'rw',
-					'/etc/zookeeper/secrets': 'rw',
-					'/var/lib/zookeeper/log': 'rw',
-					'/var/lib/kafka/data': 'rw',
-					'/etc/kafka/secrets': 'rw',
-			]) as KafkaContainer
+			kafka = new KafkaContainer(DockerImageName.parse(kafkaImage))
+					.withTmpFs([
+							'/var/lib/zookeeper/data': 'rw',
+							'/etc/zookeeper/secrets' : 'rw',
+							'/var/lib/zookeeper/log' : 'rw',
+							'/var/lib/kafka/data'    : 'rw',
+							'/etc/kafka/secrets'     : 'rw',
+					]) as KafkaContainer
 			Future future = executorService.submit {
 				kafka.start()
 			}

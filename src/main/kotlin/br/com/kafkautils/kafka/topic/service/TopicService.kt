@@ -7,7 +7,7 @@ import br.com.kafkautils.kafka.topic.model.NewTopicConfig
 import br.com.kafkautils.kafka.topic.model.PartitionInfo
 import br.com.kafkautils.kafka.topic.model.Topic
 import br.com.kafkautils.kafka.topic.model.TopicConfig
-import br.com.kafkautils.kafka.topic.model.TopicDescription
+import br.com.kafkautils.kafka.topic.model.TopicDetails
 import br.com.kafkautils.kafka.topic.model.UpdateTopicConfig
 import br.com.kafkautils.utils.FutureUtils
 import org.apache.kafka.clients.admin.AlterConfigOp
@@ -40,7 +40,7 @@ open class TopicService(
         }
     }
 
-    open fun get(@NotBlank topic: String, cluster: Cluster): Mono<TopicDescription> {
+    open fun get(@NotBlank topic: String, cluster: Cluster): Mono<TopicDetails> {
         val adminClient = adminClientFactory.build(cluster)
         val resource = ConfigResource(ConfigResource.Type.TOPIC, topic)
 
@@ -56,7 +56,7 @@ open class TopicService(
         return describeConfigsMono.flatMap { topicConfig ->
             describeTopicsMono.map { descriptions ->
                 val description = descriptions.getValue(topic)
-                TopicDescription(
+                TopicDetails(
                     name = topic,
                     internal = description.isInternal,
                     partitions = description.partitions().map {

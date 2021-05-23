@@ -6,7 +6,7 @@ import br.com.kafkautils.kafka.topic.model.NewPartition
 import br.com.kafkautils.kafka.topic.model.NewTopicConfig
 import br.com.kafkautils.kafka.topic.model.Topic
 import br.com.kafkautils.kafka.topic.model.TopicConfig
-import br.com.kafkautils.kafka.topic.model.TopicDescription
+import br.com.kafkautils.kafka.topic.model.TopicDetails
 import br.com.kafkautils.kafka.topic.model.UpdateTopicConfig
 import br.com.kafkautils.kafka.topic.service.TopicService
 import io.micronaut.http.annotation.Body
@@ -42,7 +42,7 @@ open class TopicController(
 
     @DefaultErrorResponses
     @Get("/{clusterId}/topic/{topic}")
-    open fun get(@PathVariable clusterId: Int, @PathVariable topic: String): Mono<TopicDescription> {
+    open fun get(@PathVariable clusterId: Int, @PathVariable topic: String): Mono<TopicDetails> {
         return clusterService.get(clusterId).flatMap {
             topicService.get(URLDecoder.decode(topic, StandardCharsets.UTF_8), it)
         }

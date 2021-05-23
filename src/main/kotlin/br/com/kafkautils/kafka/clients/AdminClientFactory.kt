@@ -14,7 +14,7 @@ class AdminClientFactory {
     fun build(cluster: Cluster): AdminClient {
         return clientCache.getOrPut(cluster.id) {
             val conf: MutableMap<String, Any> = HashMap()
-            conf[AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG] = cluster.brokers.joinToString(",")
+            conf[AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG] = cluster.brokers()
             conf[AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG] = cluster.requestTimeoutMs.toString()
             AdminClient.create(conf)
         }
