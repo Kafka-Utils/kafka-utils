@@ -10,10 +10,11 @@
     "build": "ng build --prod --deploy-url \"/$npm_package_config_projectName/\" --base-href \"/$npm_package_config_projectName/\"",
     "test": "ng test --browsers=Chrome",
     "testNoWatch": "ng test --watch=false --browsers=ChromeHeadless",
-    "lint": "ng lint",
     "e2e": "ng e2e",
-    "dev": "NODE_OPTIONS='--max_old_space_size=2048' ng serve --proxy-config proxy.conf.js --port 4204  --deploy-url \"/$npm_package_config_projectName/\" --base-href \"/$npm_package_config_projectName/\"",
-    "sonar": "sonar-scanner"
+    "dev": "NODE_OPTIONS='--max_old_space_size=2048' ng serve --proxy-config proxy.conf.js --port 4200  --deploy-url \"/$npm_package_config_projectName/\" --base-href \"/$npm_package_config_projectName/\"",
+    "generateClient": "openapi-generator-cli generate -i ../build/tmp/kapt3/classes/main/META-INF/swagger/kafka-utils-0.0.yml -g typescript-angular -o generated-sources/kafka-utils-client --skip-validate-spec --additional-properties=ngVersion=12.0.1,npmName=kafkaUtilsRestClient,supportsES6=true,npmVersion=6.14.11,withInterfaces=true",
+    "buildKafkaUtilsRestClient": "cd generated-sources/kafka-utils-client && npm run build && cd ../..",
+    "preinstall": "npm run generateClient && npm run buildKafkaUtilsRestClient && npm install ./generated-sources/kafka-utils-client/dist"
   },
   "private": true,
   "dependencies": {
@@ -28,6 +29,7 @@
     "@angular/platform-browser-dynamic": "~12.0.1",
     "@angular/router": "~12.0.1",
     "@openapitools/openapi-generator-cli": "^2.3.2",
+    "kafkaUtilsRestClient": "file:generated-sources/kafka-utils-client/dist",
     "rxjs": "~6.6.0",
     "tslib": "^2.1.0",
     "zone.js": "~0.11.4"

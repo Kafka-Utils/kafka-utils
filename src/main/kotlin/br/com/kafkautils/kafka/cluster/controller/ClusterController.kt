@@ -12,12 +12,14 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
+import io.swagger.v3.oas.annotations.tags.Tag
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import javax.validation.Valid
 
 @Controller("/cluster")
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@Tag(name = "cluster")
 open class ClusterController(
     private val clusterService: ClusterService,
     private val clusterMapper: ClusterMapper

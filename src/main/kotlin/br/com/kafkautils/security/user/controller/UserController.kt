@@ -13,12 +13,14 @@ import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.security.annotation.Secured
+import io.swagger.v3.oas.annotations.tags.Tag
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import javax.validation.Valid
 
 @Controller("/user")
 @Secured("ADMIN")
+@Tag(name = "user")
 open class UserController(
     private val userService: UserService,
     private val userMapper: UserMapper

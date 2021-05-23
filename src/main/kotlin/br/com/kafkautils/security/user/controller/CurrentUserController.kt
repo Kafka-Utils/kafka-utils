@@ -11,10 +11,12 @@ import io.micronaut.http.annotation.Put
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 import io.micronaut.security.utils.SecurityService
+import io.swagger.v3.oas.annotations.tags.Tag
 import reactor.core.publisher.Mono
 import javax.validation.Valid
 
 @Controller("/current-user")
+@Tag(name = "currentUser")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 open class CurrentUserController(
     private val userService: UserService,
