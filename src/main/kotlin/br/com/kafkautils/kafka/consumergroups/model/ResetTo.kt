@@ -1,7 +1,9 @@
 package br.com.kafkautils.kafka.consumergroups.model
 
-data class ToOffset(
+import javax.validation.constraints.Pattern
+
+data class ResetTo(
     override val topic: String,
     override val partition: Int,
-    val offset: Long
+    @field: Pattern(regexp = "earliest|latest") val to: String
 ) : TopicToResetOffset

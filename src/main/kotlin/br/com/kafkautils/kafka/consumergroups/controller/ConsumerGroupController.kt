@@ -4,8 +4,9 @@ import br.com.kafkautils.http.DefaultErrorResponses
 import br.com.kafkautils.kafka.cluster.service.ClusterService
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroup
 import br.com.kafkautils.kafka.consumergroups.model.ConsumerGroupTopic
-import br.com.kafkautils.kafka.consumergroups.model.ToOffset
-import br.com.kafkautils.kafka.consumergroups.model.ToTime
+import br.com.kafkautils.kafka.consumergroups.model.ResetTo
+import br.com.kafkautils.kafka.consumergroups.model.ResetToOffset
+import br.com.kafkautils.kafka.consumergroups.model.ResetToTime
 import br.com.kafkautils.kafka.consumergroups.model.TopicsToResetOffset
 import br.com.kafkautils.kafka.consumergroups.service.ConsumerGroupService
 import io.micronaut.http.annotation.Body
@@ -43,27 +44,33 @@ open class ConsumerGroupController(
 
     @DefaultErrorResponses
     @Put("/{clusterId}/consumer-group/{groupId}/offset/offsets")
-    open fun resetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsToResetOffset: TopicsToResetOffset<ToOffset>): Mono<Void> {
+    open fun resetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsResetToResetOffset: TopicsToResetOffset<ResetToOffset>): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
-            consumerGroupService.resetOffsetToOffset(it, topicsToResetOffset)
+            consumerGroupService.resetOffsetToOffset(it, topicsResetToResetOffset)
         }
     }
 
-
     @DefaultErrorResponses
     @Put("/{clusterId}/consumer-group/{groupId}/offset/shift")
-    open fun resetOffsetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsToResetOffset: TopicsToResetOffset<ToOffset>): Mono<Void> {
+    open fun resetOffsetToOffset(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsResetToResetOffset: TopicsToResetOffset<ResetToOffset>): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
-            consumerGroupService.resetOffsetShift(it, topicsToResetOffset)
+            consumerGroupService.resetOffsetShift(it, topicsResetToResetOffset)
         }
     }
 
     @DefaultErrorResponses
     @Put("/{clusterId}/consumer-group/{groupId}/offset/time")
-    open fun resetOffsetToTime(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsToResetOffset: TopicsToResetOffset<ToTime>): Mono<Void> {
+    open fun resetOffsetToTime(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsResetToResetOffset: TopicsToResetOffset<ResetToTime>): Mono<Void> {
         return clusterService.get(clusterId).flatMap {
-            consumerGroupService.resetOffsetToTime(it, topicsToResetOffset)
+            consumerGroupService.resetOffsetToTime(it, topicsResetToResetOffset)
         }
     }
 
+    @DefaultErrorResponses
+    @Put("/{clusterId}/consumer-group/{groupId}/offset")
+    open fun resetOffsetTo(@PathVariable clusterId: Int, @PathVariable groupId: String, @Body topicsResetToResetOffset: TopicsToResetOffset<ResetTo>): Mono<Void> {
+        return clusterService.get(clusterId).flatMap {
+            consumerGroupService.resetOffsetTo(it, topicsResetToResetOffset)
+        }
+    }
 }

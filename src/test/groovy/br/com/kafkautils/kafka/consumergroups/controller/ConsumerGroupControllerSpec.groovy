@@ -9,7 +9,6 @@ import br.com.kafkautils.kafka.consumergroups.service.ConsumerGroupService
 import br.com.kafkautils.kafka.topic.model.NewTopicConfig
 import br.com.kafkautils.kafka.topic.service.TopicService
 import br.com.kafkautils.security.mock.MockAccessTokenProvider
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.micronaut.core.type.Argument
 import io.micronaut.http.*
 import io.micronaut.http.client.HttpClient
@@ -30,6 +29,7 @@ import java.time.ZonedDateTime
 
 @MicronautTest(transactional = false)
 class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
+
 	@Inject
 	@Client('/api/cluster')
 	private HttpClient client
@@ -47,9 +47,6 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 
 	@Shared
 	private Cluster cluster
-
-	@Inject
-	private ObjectMapper objectMapper
 
 	@Shared
 	@Inject
@@ -114,7 +111,7 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 		consumer.close()
 	}
 
-	def "List"() {
+	void "List"() {
 		given:
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.GET("/${cluster.id}/consumer-group")
@@ -128,7 +125,7 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 		groups*.state.toSet() == [''].toSet()
 	}
 
-	def "Details"() {
+	void "Details"() {
 		given:
 		String accessToken = accessTokenProvider.editorAccessToken
 		MutableHttpRequest request = HttpRequest.GET("/${cluster.id}/consumer-group/$consumerGroup1")
@@ -146,13 +143,13 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [3L, 2L].toSet()
 	}
 
-	def "reset using offset"() {
+	void "reset using offset"() {
 		given:
-		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ToOffset>(
+		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ResetToOffset>(
 				consumerGroup1,
 				[
-						new ToOffset(topicName, 0, 0),
-						new ToOffset(topicName, 1, 0),
+						new ResetToOffset(topicName, 0, 0),
+						new ResetToOffset(topicName, 1, 0),
 				].toSet()
 		)
 		String accessToken = accessTokenProvider.editorAccessToken
@@ -173,21 +170,21 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [8L, 7L].toSet()
 	}
 
-	def "reset using shift"() {
+	void "reset using shift"() {
 		setup:
-		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ToOffset>(
+		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ResetToOffset>(
 				consumerGroup1,
 				[
-						new ToOffset(topicName, 0, 6),
-						new ToOffset(topicName, 1, 4),
+						new ResetToOffset(topicName, 0, 6),
+						new ResetToOffset(topicName, 1, 4),
 				].toSet()
 		)
 		consumerGroupService.resetOffsetToOffset(cluster, topicsToResetOffset).block()
-		topicsToResetOffset = new TopicsToResetOffset<ToOffset>(
+		topicsToResetOffset = new TopicsToResetOffset<ResetToOffset>(
 				consumerGroup1,
 				[
-						new ToOffset(topicName, 0, -2),
-						new ToOffset(topicName, 1, 2),
+						new ResetToOffset(topicName, 0, -2),
+						new ResetToOffset(topicName, 1, 2),
 				].toSet()
 		)
 		String accessToken = accessTokenProvider.editorAccessToken
@@ -208,22 +205,22 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [2L, 3L].toSet()
 	}
 
-	def "reset using time"() {
+	void "reset using time"() {
 		setup:
-		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ToOffset>(
+		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ResetToOffset>(
 				consumerGroup1,
 				[
-						new ToOffset(topicName, 0, 0),
-						new ToOffset(topicName, 1, 0),
+						new ResetToOffset(topicName, 0, 0),
+						new ResetToOffset(topicName, 1, 0),
 				].toSet()
 		)
 		consumerGroupService.resetOffsetToOffset(cluster, topicsToResetOffset).block()
 		ZonedDateTime dateTime = ZonedDateTime.now().minusMinutes(1).toInstant().atZone(ZoneId.of('UTC'))
-		topicsToResetOffset = new TopicsToResetOffset<ToTime>(
+		topicsToResetOffset = new TopicsToResetOffset<ResetToTime>(
 				consumerGroup1,
 				[
-						new ToTime(topicName, 0, dateTime),
-						new ToTime(topicName, 1, dateTime),
+						new ResetToTime(topicName, 0, dateTime),
+						new ResetToTime(topicName, 1, dateTime),
 				].toSet()
 		)
 		String accessToken = accessTokenProvider.editorAccessToken
@@ -242,5 +239,110 @@ class ConsumerGroupControllerSpec extends KafkaIntegrationSpec {
 		consumerGroupTopic.partitionsOffsets*.offset.toSet() == [0L, 0L].toSet()
 		consumerGroupTopic.partitionsOffsets*.lastOffset.toSet() == [8L, 7L].toSet()
 		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [8L, 7L].toSet()
+	}
+
+	void "reset using to earliest"() {
+		setup:
+		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ResetToOffset>(
+				consumerGroup1,
+				[
+						new ResetToOffset(topicName, 0, 5),
+						new ResetToOffset(topicName, 1, 5),
+				].toSet()
+		)
+		consumerGroupService.resetOffsetToOffset(cluster, topicsToResetOffset).block()
+		topicsToResetOffset = new TopicsToResetOffset<ResetTo>(
+				consumerGroup1,
+				[
+						new ResetTo(topicName, 0, 'earliest'),
+						new ResetTo(topicName, 1, 'earliest'),
+				].toSet()
+		)
+		String accessToken = accessTokenProvider.editorAccessToken
+		MutableHttpRequest request = HttpRequest.PUT("/${cluster.id}/consumer-group/$consumerGroup1/offset", topicsToResetOffset)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+		when:
+		HttpResponse response = client.toBlocking().exchange(request)
+		List<ConsumerGroupTopic> consumerGroupTopics = consumerGroupService.details(consumerGroup1, cluster).collectList().block()
+		ConsumerGroupTopic consumerGroupTopic = consumerGroupTopics[0]
+		then:
+		response.status() == HttpStatus.OK
+		consumerGroupTopics.size() == 1
+		consumerGroupTopic.groupId == consumerGroup1
+		consumerGroupTopic.topic == topicName
+		consumerGroupTopic.partitionsOffsets.size() == 2
+		consumerGroupTopic.partitionsOffsets*.offset.toSet() == [0L, 0L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lastOffset.toSet() == [8L, 7L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [8L, 7L].toSet()
+	}
+
+	void "reset using to latest"() {
+		setup:
+		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ResetToOffset>(
+				consumerGroup1,
+				[
+						new ResetToOffset(topicName, 0, 2),
+						new ResetToOffset(topicName, 1, 2),
+				].toSet()
+		)
+		consumerGroupService.resetOffsetToOffset(cluster, topicsToResetOffset).block()
+		topicsToResetOffset = new TopicsToResetOffset<ResetTo>(
+				consumerGroup1,
+				[
+						new ResetTo(topicName, 0, 'latest'),
+						new ResetTo(topicName, 1, 'latest'),
+				].toSet()
+		)
+		String accessToken = accessTokenProvider.editorAccessToken
+		MutableHttpRequest request = HttpRequest.PUT("/${cluster.id}/consumer-group/$consumerGroup1/offset", topicsToResetOffset)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+		when:
+		HttpResponse response = client.toBlocking().exchange(request)
+		List<ConsumerGroupTopic> consumerGroupTopics = consumerGroupService.details(consumerGroup1, cluster).collectList().block()
+		ConsumerGroupTopic consumerGroupTopic = consumerGroupTopics[0]
+		then:
+		response.status() == HttpStatus.OK
+		consumerGroupTopics.size() == 1
+		consumerGroupTopic.groupId == consumerGroup1
+		consumerGroupTopic.topic == topicName
+		consumerGroupTopic.partitionsOffsets.size() == 2
+		consumerGroupTopic.partitionsOffsets*.offset.toSet() == [8L, 7L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lastOffset.toSet() == [8L, 7L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [0L, 0L].toSet()
+	}
+
+	void "reset using to earliest and latest"() {
+		setup:
+		TopicsToResetOffset topicsToResetOffset = new TopicsToResetOffset<ResetToOffset>(
+				consumerGroup1,
+				[
+						new ResetToOffset(topicName, 0, 2),
+						new ResetToOffset(topicName, 1, 2),
+				].toSet()
+		)
+		consumerGroupService.resetOffsetToOffset(cluster, topicsToResetOffset).block()
+		topicsToResetOffset = new TopicsToResetOffset<ResetTo>(
+				consumerGroup1,
+				[
+						new ResetTo(topicName, 0, 'earliest'),
+						new ResetTo(topicName, 1, 'latest'),
+				].toSet()
+		)
+		String accessToken = accessTokenProvider.editorAccessToken
+		MutableHttpRequest request = HttpRequest.PUT("/${cluster.id}/consumer-group/$consumerGroup1/offset", topicsToResetOffset)
+				.header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+		when:
+		HttpResponse response = client.toBlocking().exchange(request)
+		List<ConsumerGroupTopic> consumerGroupTopics = consumerGroupService.details(consumerGroup1, cluster).collectList().block()
+		ConsumerGroupTopic consumerGroupTopic = consumerGroupTopics[0]
+		then:
+		response.status() == HttpStatus.OK
+		consumerGroupTopics.size() == 1
+		consumerGroupTopic.groupId == consumerGroup1
+		consumerGroupTopic.topic == topicName
+		consumerGroupTopic.partitionsOffsets.size() == 2
+		consumerGroupTopic.partitionsOffsets*.offset.toSet() == [0L, 8L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lastOffset.toSet() == [8L, 7L].toSet()
+		consumerGroupTopic.partitionsOffsets*.lag.toSet() == [7L, 0L].toSet()
 	}
 }

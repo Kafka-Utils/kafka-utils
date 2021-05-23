@@ -1,9 +1,7 @@
 package br.com.kafkautils.kafka.consumergroups.model
 
-import java.time.ZonedDateTime
-
-data class ToTime(
+data class ResetToOffset(
     override val topic: String,
     override val partition: Int,
-    val time: ZonedDateTime
+    val offset: Long
 ) : TopicToResetOffset

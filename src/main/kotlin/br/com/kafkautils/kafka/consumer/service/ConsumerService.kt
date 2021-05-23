@@ -2,13 +2,6 @@ package br.com.kafkautils.kafka.consumer.service
 
 import br.com.kafkautils.kafka.cluster.model.Cluster
 import io.micronaut.scheduling.TaskExecutors
-import java.time.ZonedDateTime
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ExecutorService
-import javax.inject.Named
-import javax.inject.Singleton
-import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -18,6 +11,13 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
+import java.time.ZonedDateTime
+import java.util.Properties
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutorService
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Singleton
 class ConsumerService(
@@ -59,5 +59,4 @@ class ConsumerService(
             buildSimpleConsumer(cluster, "kafka-utils")
         }
     }
-
 }
