@@ -4,6 +4,14 @@ micronaut:
   server:
     context-path: /api
     read-timeout: 180
+  micronaut:
+    router:
+      static-resources:
+        default:
+          enabled: true
+          mapping: "/ui/**"
+          paths: classpath:ui
+
   security:
     enabled: true
     authentication: bearer
