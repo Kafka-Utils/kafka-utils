@@ -1,0 +1,13 @@
+<mat-toolbar color="primary" fxLayout="row" fxLayoutAlign="space-between center">
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <button mat-icon-button (click)="menuClick.emit()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>Kafka Utils</span>
+  </div>
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <button (click)="changeTheme()" mat-icon-button>
+      <mat-icon>{{ isDarkTheme ? 'light_mode' : 'nightlight_round' }}</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
